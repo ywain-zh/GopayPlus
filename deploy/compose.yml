@@ -1,0 +1,60 @@
+services:
+  gopayplus-mysql:
+    image: mysql:8.0
+    container_name: gopayplus-mysql
+    restart: unless-stopped
+    command:
+      - --innodb-buffer-pool-size=128M
+      - --max-connections=30
+      - --table-open-cache=200
+      - --performance-schema=OFF
+      - --skip-name-resolve
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-plus_papay}
+      MYSQL_USER: ${DB_USER:-gopayplus}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    mem_limit: 512m
+    mem_reservation: 256m
+
+  gopayplus-app:
+    image: ${APP_IMAGE:?APP_IMAGE is required}
+    container_name: gopayplus-app
+    restart: unless-stopped
+    depends_on:
+      gopayplus-mysql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${PORT:-3000}:3000"
+    env_file:
+      - .env
+    environment:
+      PORT: 3000
+      DB_HOST: gopayplus-mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-plus_papay}
+      DB_USER: ${DB_USER:-gopayplus}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_POOL_LIMIT: ${DB_POOL_LIMIT:-5}
+      HEADFUL: 0
+    volumes:
+      - ./product_files:/app/product_files
+      - ./debug_screenshots:/app/debug_screenshots
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"const http=require('http');const req=http.get('http://127.0.0.1:3000/api/public/runtime',res=>process.exit(res.statusCode>=200&&res.statusCode<300?0:1));req.on('error',()=>process.exit(1));req.setTimeout(4000,()=>{req.destroy();process.exit(1);});\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    mem_limit: 900m
+    mem_reservation: 256m

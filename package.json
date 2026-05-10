@@ -1,0 +1,35 @@
+{
+  "name": "plus-papay",
+  "version": "1.0.0",
+  "description": "ChatGPT Plus 自动化开通工具（PayPal 通道）：注册 → 0 元 Stripe Checkout → PayPal 支付 → 协议 token 入库",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:headful": "cross-env HEADFUL=1 node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "axios": "^1.16.0",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "fs-extra": "^11.3.4",
+    "imapflow": "^1.3.3",
+    "jsonwebtoken": "^9.0.3",
+    "mailparser": "^3.9.8",
+    "mysql2": "^3.15.2",
+    "path": "^0.12.7",
+    "playwright": "^1.59.1",
+    "playwright-extra": "^4.3.6",
+    "playwright-stealth": "^0.0.1",
+    "proxy-agent": "^8.0.1",
+    "puppeteer-core": "^24.42.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "uuid": "^14.0.0",
+    "ws": "^8.20.0"
+  }
+}

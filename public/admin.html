@@ -1,0 +1,4635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Plus 管理系统 | 控制台</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* ============================================================
+         * Enterprise Blue SaaS Theme — 后台控制台
+         * ============================================================ */
+        :root {
+            --sidebar-width: 260px;
+
+            /* 主色 */
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-soft: #eff6ff;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.18);
+
+            /* 中性色 */
+            --bg-page: #f4f7fb;
+            --bg-dark: #f4f7fb;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --surface-hover: #f1f5f9;
+            --glass-border: #e5e7eb;
+            --border-strong: #cbd5e1;
+            --divider: #eef2f7;
+
+            /* 文本 */
+            --text-main: #0f172a;
+            --text-secondary: #334155;
+            --text-dim: #64748b;
+            --text-muted: #94a3b8;
+
+            /* 状态色 */
+            --success: #10b981;
+            --success-soft: #ecfdf5;
+            --error: #ef4444;
+            --error-soft: #fef2f2;
+            --warning: #f59e0b;
+            --warning-soft: #fffbeb;
+            --info: #0ea5e9;
+            --info-soft: #f0f9ff;
+
+            /* 阴影 */
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow: 0 4px 16px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.10), 0 4px 12px rgba(15, 23, 42, 0.05);
+            --shadow-focus: 0 0 0 4px rgba(37, 99, 235, 0.14);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        html, body {
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            background: var(--bg-page);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.05) 0%, transparent 45%);
+            pointer-events: none;
+        }
+
+        /* ============ 侧边栏 ============ */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 28px 18px;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding: 0 8px;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 14px var(--accent-glow);
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: var(--text-main);
+            background: none;
+            -webkit-background-clip: initial;
+            -webkit-text-fill-color: var(--text-main);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+            transform: none;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 10px var(--accent-glow);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            width: 18px;
+            height: 18px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* ============ 主体内容 ============ */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 36px 48px;
+            position: relative;
+        }
+
+        .page-view {
+            display: none;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .page-view.active {
+            display: block;
+            animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+
+        .page-header p {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        /* ============ 统计卡片 ============ */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.1;
+        }
+
+        /* ============ 面板 ============ */
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title::before {
+            content: '';
+            width: 3px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ============ 系统配置：左右双栏 ============ */
+        .config-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .config-grid > .panel {
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 1100px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============ 邮箱来源单选卡片 ============ */
+        .email-source-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .email-source-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border: 1px solid var(--divider);
+            border-radius: 12px;
+            padding: 14px 16px;
+            background: var(--surface-soft);
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .email-source-card:hover {
+            border-color: var(--primary);
+        }
+
+        .email-source-card input[type="radio"] {
+            margin-top: 4px;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            flex: 0 0 16px;
+        }
+
+        .email-source-card.is-active {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.06);
+            box-shadow: 0 0 0 1px var(--primary) inset;
+        }
+
+        .email-source-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .email-source-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .email-source-title i {
+            color: var(--primary);
+        }
+
+        .email-source-desc {
+            margin-top: 6px;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.55;
+        }
+
+        #pool_email_options[data-disabled="1"],
+        #random_email_options[data-disabled="1"],
+        #inbox_email_options[data-disabled="1"] {
+            opacity: 0.45;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ============ 表格 ============ */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--divider);
+            border-radius: 10px;
+        }
+
+        .table-footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-meta {
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            min-width: 36px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: none;
+            font-family: inherit;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: var(--text-muted);
+        }
+
+        .pagination button.pagination-nav {
+            min-width: 64px;
+        }
+
+        .pagination button.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 6px var(--accent-glow);
+        }
+
+        .pagination span {
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        .pagination .pagination-ellipsis {
+            min-width: 18px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--surface-soft);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--divider);
+            font-size: 14px;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--surface-soft);
+        }
+
+        /* ============ 表单 ============ */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            width: 16px;
+            height: 16px;
+        }
+
+        .asset-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.18s, box-shadow 0.18s;
+            font-family: inherit;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .asset-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .asset-input:hover {
+            border-color: var(--border-strong);
+        }
+
+        .asset-input:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: var(--shadow-focus);
+        }
+
+        /* 自定义 <select> 样式（蓝色箭头） */
+        select.asset-input {
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding: 10px 36px 10px 14px !important;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        select.asset-input:hover {
+            background-color: var(--surface-soft);
+            border-color: var(--border-strong);
+        }
+
+        select.asset-input option {
+            background-color: var(--surface);
+            color: var(--text-main);
+            padding: 12px;
+        }
+
+        /* 通用按钮 */
+        .btn {
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .btn i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 批量导入框 */
+        .import-box {
+            display: none;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--surface-soft);
+        }
+
+        .import-box.active {
+            display: block;
+        }
+
+        .import-box-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .import-box-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .import-box-tip {
+            color: var(--text-dim);
+            font-size: 13px;
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+
+        .import-textarea {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: var(--text-main);
+            font-size: 13px;
+            line-height: 1.6;
+            outline: none;
+            font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+            transition: border-color 0.18s, box-shadow 0.18s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .import-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-focus);
+        }
+
+        .import-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* 主按钮 */
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 1px 2px rgba(37, 99, 235, 0.16);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+            box-shadow: 0 4px 12px var(--accent-glow);
+            transform: none;
+        }
+
+        /* 次要按钮（白底蓝边） */
+        .btn-success {
+            background: var(--surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: #bfdbfe;
+        }
+
+        .btn-delete {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--error-soft);
+            color: var(--error);
+            border: 1px solid #fecaca;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-delete:hover {
+            background: var(--error);
+            color: #ffffff;
+            border-color: var(--error);
+        }
+
+        .btn-delete i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 与 .btn 同用的危险操作（含文案）；单独 .btn-delete 仍为表格内 32×32 图标格 */
+        .btn.btn-delete {
+            width: auto;
+            min-width: auto;
+            height: auto;
+            min-height: 38px;
+            border-radius: 10px;
+            padding: 9px 16px;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        /* 只读开关（小） */
+        .readonly-switch {
+            width: 40px;
+            height: 22px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            border: 1px solid #d4d4d8;
+            display: inline-flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .readonly-switch::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #94a3b8;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+        }
+
+        .readonly-switch.active {
+            background: var(--success-soft);
+            border-color: #a7f3d0;
+        }
+
+        .readonly-switch.active::after {
+            background: var(--success);
+            transform: translateX(18px);
+        }
+
+        /* 维护模式开关 */
+        .toggle-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .toggle-control {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            display: inline-flex;
+            flex-shrink: 0;
+        }
+
+        .toggle-input {
+            position: absolute;
+            inset: 0;
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            border: 1px solid #d4d4d8;
+            display: inline-flex;
+            align-items: center;
+            padding: 2px;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            transition: 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+        }
+
+        .toggle-input:checked + .toggle-switch {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .toggle-input:checked + .toggle-switch::after {
+            background: #ffffff;
+            transform: translateX(22px);
+        }
+
+        .toggle-input:disabled {
+            cursor: not-allowed;
+        }
+
+        .toggle-input:disabled + .toggle-switch {
+            opacity: 0.55;
+        }
+
+        /* 复选框格 */
+        .select-cell {
+            text-align: center;
+            width: 60px;
+            min-width: 60px;
+        }
+
+        .select-cell input {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 1.5px solid var(--border-strong);
+            background: var(--surface);
+            display: inline-grid;
+            place-content: center;
+            transition: 0.15s;
+        }
+
+        .select-cell input::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center / contain;
+            transform: scale(0);
+            transition: 0.15s;
+        }
+
+        .select-cell input:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-focus);
+        }
+
+        .select-cell input:checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .select-cell input:checked::before {
+            transform: scale(1);
+        }
+
+        .select-header {
+            white-space: nowrap;
+            text-align: center;
+            font-size: 11px;
+            letter-spacing: 0;
+        }
+
+        /* 批量操作栏 */
+        .batch-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 14px;
+        }
+
+        .batch-actions .btn {
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* 自定义下拉过滤器 */
+        .filter-dropdown {
+            position: relative;
+            min-width: 130px;
+        }
+
+        .filter-trigger {
+            width: 100%;
+            padding: 8px 12px 8px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: var(--surface);
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            box-shadow: var(--shadow-sm);
+            transition: 0.18s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .filter-trigger:hover,
+        .filter-dropdown.open .filter-trigger {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-focus);
+            color: var(--primary);
+        }
+
+        .filter-trigger i {
+            width: 14px;
+            height: 14px;
+            color: var(--text-dim);
+            transition: transform 0.18s, color 0.18s;
+        }
+
+        .filter-dropdown.open .filter-trigger i {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        .filter-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 100%;
+            padding: 6px;
+            border-radius: 12px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            z-index: 30;
+            display: none;
+        }
+
+        .filter-dropdown.open .filter-menu {
+            display: block;
+            animation: filter-menu-in 0.15s ease-out;
+        }
+
+        .filter-option {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+            font-weight: 500;
+            font-size: 13px;
+            transition: 0.12s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .filter-option:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .filter-option.active {
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        @keyframes filter-menu-in {
+            from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Toast 消息 */
+        .message-container {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .message-item {
+            min-width: 240px;
+            max-width: min(560px, calc(100vw - 40px));
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            box-shadow: var(--shadow-lg);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 13px;
+            animation: message-in 0.18s ease-out;
+        }
+
+        .message-item i {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .message-success {
+            border-color: #a7f3d0;
+            background: var(--success-soft);
+            color: #065f46;
+        }
+
+        .message-error {
+            border-color: #fecaca;
+            background: var(--error-soft);
+            color: #991b1b;
+        }
+
+        .message-warning {
+            border-color: #fde68a;
+            background: var(--warning-soft);
+            color: #92400e;
+        }
+
+        @keyframes message-in {
+            from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* CDK 复制 */
+        .cdk-copy {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: 0.15s;
+            color: var(--text-main);
+        }
+
+        .cdk-copy:hover {
+            color: var(--primary);
+        }
+
+        .cdk-copy i {
+            width: 13px;
+            height: 13px;
+            color: var(--text-dim);
+        }
+
+        .cdk-copy:hover i {
+            color: var(--primary);
+        }
+
+        /* 状态徽标 */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.3;
+        }
+
+        .status-success {
+            background: var(--success-soft);
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-failed {
+            background: var(--error-soft);
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .status-running {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-warning {
+            background: var(--warning-soft);
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        code {
+            background: var(--primary-soft);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+            color: var(--primary);
+            font-size: 0.92em;
+        }
+
+        /* number 输入框去掉默认上下箭头 */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        /* 全局滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+            border: 2px solid var(--bg-page);
+            transition: background 0.2s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        * {
+            scrollbar-color: #cbd5e1 transparent;
+            scrollbar-width: thin;
+        }
+
+        /* 任务进度迷你条 */
+        .progress-mini-track {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-mini-bar {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            border-radius: inherit;
+        }
+
+        .progress-mini-bar.success {
+            background: var(--success);
+        }
+
+        .progress-mini-bar.failed {
+            background: var(--error);
+        }
+
+        /* ============ 兼容旧 inline 样式（暗色覆层） ============
+         * admin.html 内有大量历史 inline `style="background: rgba(255,255,255,0.03)"` 等
+         * 在亮底主题会变成"白上加白"看不见，统一替换为浅灰底
+         */
+        [style*="background: rgba(255,255,255,0.03)"],
+        [style*="background: rgba(255, 255, 255, 0.03)"],
+        [style*="background: rgba(255,255,255,0.05)"],
+        [style*="background: rgba(255, 255, 255, 0.05)"],
+        [style*="background: rgba(255,255,255,0.02)"],
+        [style*="background: rgba(255, 255, 255, 0.02)"],
+        [style*="background:rgba(255,255,255,0.02)"] {
+            background: var(--surface-soft) !important;
+        }
+
+        [style*="background: rgba(255, 255, 255, 0.05)"][style*="border-radius: 4px"],
+        [style*="background: rgba(255, 255, 255, 0.05)"][style*="border-radius: 3px"] {
+            background: #e5e7eb !important;
+        }
+
+        [style*="border: 1px solid rgba(255,255,255,0.05)"],
+        [style*="border: 1px solid rgba(255, 255, 255, 0.05)"],
+        [style*="border: 1px solid rgba(255,255,255,0.08)"],
+        [style*="border: 1px solid rgba(255, 255, 255, 0.08)"],
+        [style*="border: 1px solid rgba(255,255,255,0.1)"],
+        [style*="border: 1px solid rgba(255, 255, 255, 0.1)"],
+        [style*="border: 1px dashed rgba(255, 255, 255, 0.1)"],
+        [style*="border: 1px dashed rgba(255,255,255,0.1)"] {
+            border-color: var(--glass-border) !important;
+        }
+
+        /* 内嵌的状态徽标（行内 style）颜色重映射，让浅紫/浅绿可读 */
+        .status-badge[style*="background: rgba(99, 102, 241"],
+        .status-badge[style*="background: rgba(99,102,241"] {
+            background: var(--primary-soft) !important;
+            color: var(--primary) !important;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-badge[style*="background: rgba(16, 185, 129"],
+        .status-badge[style*="background: rgba(16,185,129"] {
+            background: var(--success-soft) !important;
+            color: #047857 !important;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-badge[style*="background: rgba(245, 158, 11"],
+        .status-badge[style*="background: rgba(245,158,11"] {
+            background: var(--warning-soft) !important;
+            color: #b45309 !important;
+            border: 1px solid #fde68a;
+        }
+
+        .status-badge[style*="background: rgba(239, 68, 68"],
+        .status-badge[style*="background: rgba(239,68,68"] {
+            background: var(--error-soft) !important;
+            color: #b91c1c !important;
+            border: 1px solid #fecaca;
+        }
+
+        /* 行内 color: var(--text-dim) 等已经通过变量重映射，不需要再处理 */
+
+        /* 成品生产进度面板：原本是黑底白字，改成浅蓝底蓝字 */
+        #product_gen_progress_container {
+            background: var(--primary-soft) !important;
+            border: 1px solid #bfdbfe !important;
+            border-radius: 12px !important;
+        }
+
+        #product_gen_status {
+            color: var(--text-secondary) !important;
+        }
+
+        #product_gen_percent {
+            color: var(--primary) !important;
+        }
+
+        /* loading 旋转图标 */
+        .animate-spin {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 链接默认色 */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        ::selection {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Dashboard 数值原本是浅紫/浅绿等暗底色，改为同色系深色保证白底可读 */
+        .stat-value[style*="color: #f9a8d4"] { color: #db2777 !important; }     /* CPU 粉 */
+        .stat-value[style*="color: #86efac"] { color: #047857 !important; }     /* 内存 绿 */
+        .stat-value[style*="color: #fde68a"] { color: #b45309 !important; }     /* 硬盘 橙 */
+        .stat-value[style*="color: #99f6e4"] { color: #0f766e !important; }     /* 运行时间 青 */
+        .stat-value[style*="color: #93c5fd"] { color: #1d4ed8 !important; }     /* 卡密 蓝 */
+        .stat-value[style*="color: #fbbf24"] { color: #b45309 !important; }     /* 未使用 / 待生产 黄 */
+        .stat-value[style*="color: #7dd3fc"] { color: #0369a1 !important; }     /* 手机号 浅蓝 */
+        .stat-value[style*="color: #d8b4fe"] { color: #7e22ce !important; }     /* 银行卡 紫 */
+        .stat-value[style*="color: #34d399"] { color: #047857 !important; }     /* 成品 绿 */
+        .stat-value[style*="color: #f87171"] { color: #b91c1c !important; }     /* 失败 / 封禁 红 */
+        .stat-value[style*="color: #60a5fa"] { color: #1d4ed8 !important; }     /* 前台并发 蓝 */
+        .stat-value[style*="color: var(--success)"] { color: #047857 !important; }
+        .stat-value[style*="color: var(--error)"] { color: #b91c1c !important; }
+        .stat-value[style*="color: var(--accent)"] { color: var(--primary) !important; }
+
+        /* stat-icon 暗色软背景也整体调亮一点 */
+        .stat-icon { box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04); }
+
+        /* "开通中"行内 badge */
+        .status-badge[style*="color: #f59e0b"] {
+            color: #b45309 !important;
+        }
+
+        /* 行内深色 code 强制改为蓝色 */
+        code[style*="color: #fff"],
+        code[style*="color:#fff"] {
+            color: var(--primary) !important;
+            background: var(--primary-soft) !important;
+        }
+
+        /* 表格内 inline 文字色（浅紫/浅蓝/浅绿）映射到深色版 */
+        td [style*="color: #818cf8"],
+        td [style*="color:#818cf8"] { color: var(--primary) !important; }
+        td [style*="color: #34d399"],
+        td [style*="color:#34d399"] { color: #047857 !important; }
+        td [style*="color: #f87171"],
+        td [style*="color:#f87171"] { color: #b91c1c !important; }
+        td [style*="color: #fbbf24"],
+        td [style*="color:#fbbf24"] { color: #b45309 !important; }
+
+        /* 旧 status-badge inline 浅色文字（'#818cf8' 等）→ 深色 */
+        .status-badge[style*="color: #818cf8"] {
+            background: var(--primary-soft) !important;
+            color: var(--primary) !important;
+            border: 1px solid #bfdbfe;
+        }
+        .status-badge[style*="color: #34d399"] {
+            background: var(--success-soft) !important;
+            color: #047857 !important;
+            border: 1px solid #a7f3d0;
+        }
+        .status-badge[style*="color: #f87171"] {
+            background: var(--error-soft) !important;
+            color: #b91c1c !important;
+            border: 1px solid #fecaca;
+        }
+
+        /* 运行日志页 */
+        .runtime-log-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 20px;
+            margin-bottom: 12px;
+        }
+
+        .runtime-log-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .runtime-log-toggle input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .runtime-log-hint {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            line-height: 1.55;
+        }
+
+        .runtime-log-pre-wrap {
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            background: var(--surface-soft);
+            max-height: calc(100vh - 280px);
+            min-height: 360px;
+            overflow: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .runtime-log-pre {
+            margin: 0;
+            padding: 14px 16px;
+            font-family: 'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.55;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .log-page-toolbar {
+            margin-bottom: 16px;
+        }
+
+        .log-page-toolbar-hint {
+            flex: 1 1 220px;
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.55;
+            min-width: 200px;
+        }
+
+        /* 工具栏内按钮统一高度（避免 btn-primary / btn-delete 混用高度不一致） */
+        .runtime-log-toolbar .btn,
+        .log-page-toolbar .btn {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 16px;
+            box-sizing: border-box;
+            box-shadow: none;
+            flex-shrink: 0;
+        }
+
+        .runtime-log-toolbar .btn i,
+        .log-page-toolbar .btn i {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* 与控制台风格统一的确认框（替代原生 confirm） */
+        .admin-confirm-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .admin-confirm-overlay.is-open {
+            display: flex;
+        }
+
+        .admin-confirm-dialog {
+            width: 100%;
+            max-width: 440px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 22px 22px 18px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .admin-confirm-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .admin-confirm-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 22px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .admin-confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+    <div id="message_container" class="message-container"></div>
+
+    <div id="admin_confirm_overlay" class="admin-confirm-overlay" role="presentation" aria-hidden="true"
+        onclick="if (event.target === this) closeAdminConfirm(false)">
+        <div class="admin-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="admin_confirm_title"
+            onclick="event.stopPropagation()">
+            <div id="admin_confirm_title" class="admin-confirm-title">请确认</div>
+            <p id="admin_confirm_text" class="admin-confirm-text"></p>
+            <div class="admin-confirm-actions">
+                <button type="button" class="btn btn-success" id="admin_confirm_cancel"
+                    onclick="closeAdminConfirm(false)">取消</button>
+                <button type="button" class="btn btn-primary" id="admin_confirm_ok"
+                    onclick="closeAdminConfirm(true)">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo"><i data-lucide="zap" color="white" fill="white"></i></div>
+            <span class="brand-name">PLUS ADMIN</span>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-item active" onclick="switchPage('dashboard', this)">
+                <i data-lucide="layout-dashboard"></i>
+                <span>概览中心</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('config', this)">
+                <i data-lucide="settings"></i>
+                <span>系统配置</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('phones', this)">
+                <i data-lucide="smartphone"></i>
+                <span>手机号池</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('cards', this)">
+                <i data-lucide="credit-card"></i>
+                <span>银行卡池</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('pool_emails', this)">
+                <i data-lucide="mail"></i>
+                <span>邮箱管理</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('cdks', this)">
+                <i data-lucide="key"></i>
+                <span>CDK 管理</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('products', this)">
+                <i data-lucide="package"></i>
+                <span>成品号池</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('logs', this)">
+                <i data-lucide="file-text"></i>
+                <span>任务管理</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('runtime_logs', this)">
+                <i data-lucide="terminal"></i>
+                <span>运行日志</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item" style="color: var(--error);" onclick="location.href='/'">
+                <i data-lucide="log-out"></i>
+                <span>返回前台</span>
+            </div>
+            <div class="nav-item" onclick="logoutAdmin()">
+                <i data-lucide="shield-off"></i>
+                <span>退出登录</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <!-- 概览 -->
+        <div id="dashboard" class="page-view active">
+            <div class="page-header">
+                <h1>概览中心</h1>
+                <p>实时监控任务执行状态与资源分配情况</p>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">CPU 占用率</span>
+                        <div class="stat-icon" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
+                            <i data-lucide="cpu"></i>
+                        </div>
+                    </div>
+                    <div id="stat_cpu_percent" class="stat-value" style="color: #f9a8d4;">0%</div>
+                    <div id="stat_cpu_meta" style="font-size: 13px; color: var(--text-dim);">实时 CPU 使用率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">内存占用率</span>
+                        <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1); color: #4ade80;">
+                            <i data-lucide="memory-stick"></i>
+                        </div>
+                    </div>
+                    <div id="stat_memory_percent" class="stat-value" style="color: #86efac;">0%</div>
+                    <div id="stat_memory_meta" style="font-size: 13px; color: var(--text-dim);">0.0G/0.0G</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">硬盘占用率</span>
+                        <div class="stat-icon" style="background: rgba(251, 191, 36, 0.1); color: #fbbf24;">
+                            <i data-lucide="hard-drive"></i>
+                        </div>
+                    </div>
+                    <div id="stat_disk_percent" class="stat-value" style="color: #fde68a;">0%</div>
+                    <div id="stat_disk_meta" style="font-size: 13px; color: var(--text-dim);">0.0G/0.0G</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">运行时间</span>
+                        <div class="stat-icon" style="background: rgba(45, 212, 191, 0.1); color: #5eead4;">
+                            <i data-lucide="timer"></i>
+                        </div>
+                    </div>
+                    <div id="stat_uptime_text" class="stat-value" style="color: #99f6e4; font-size: 28px;">0秒</div>
+                    <div id="stat_uptime_meta" style="font-size: 13px; color: var(--text-dim);">服务持续运行时间</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">总任务量</span>
+                        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--accent);">
+                            <i data-lucide="activity"></i>
+                        </div>
+                    </div>
+                    <div id="stat_total" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">成功任务</span>
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                    </div>
+                    <div id="stat_success" class="stat-value" style="color: var(--success);">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">失败任务</span>
+                        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
+                            <i data-lucide="x-circle"></i>
+                        </div>
+                    </div>
+                    <div id="stat_failed" class="stat-value" style="color: var(--error);">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">卡密总数</span>
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #60a5fa;">
+                            <i data-lucide="tickets"></i>
+                        </div>
+                    </div>
+                    <div id="stat_cdk_total" class="stat-value" style="color: #93c5fd;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">已使用卡密</span>
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i data-lucide="badge-check"></i>
+                        </div>
+                    </div>
+                    <div id="stat_cdk_used" class="stat-value" style="color: var(--success);">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">未使用卡密</span>
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i data-lucide="badge-plus"></i>
+                        </div>
+                    </div>
+                    <div id="stat_cdk_unused" class="stat-value" style="color: #fbbf24;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">手机号数量</span>
+                        <div class="stat-icon" style="background: rgba(14, 165, 233, 0.1); color: #38bdf8;">
+                            <i data-lucide="smartphone"></i>
+                        </div>
+                    </div>
+                    <div id="stat_phone_total" class="stat-value" style="color: #7dd3fc;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">银行卡数量</span>
+                        <div class="stat-icon" style="background: rgba(168, 85, 247, 0.1); color: #c084fc;">
+                            <i data-lucide="credit-card"></i>
+                        </div>
+                    </div>
+                    <div id="stat_card_total" class="stat-value" style="color: #d8b4fe;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">成品号数量</span>
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i data-lucide="package"></i>
+                        </div>
+                    </div>
+                    <div id="stat_product_total" class="stat-value" style="color: #34d399;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">成品封禁数量</span>
+                        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #f87171;">
+                            <i data-lucide="package-x"></i>
+                        </div>
+                    </div>
+                    <div id="stat_product_disabled" class="stat-value" style="color: #f87171;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">成品待生产</span>
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i data-lucide="hammer"></i>
+                        </div>
+                    </div>
+                    <div id="stat_product_pending" class="stat-value" style="color: #fbbf24;">0</div>
+                    <button id="resume_product_btn" class="btn btn-success" style="display: none; width: fit-content; padding: 10px 16px; border-radius: 12px;" onclick="resumePendingProducts(this)">
+                        <i data-lucide="rotate-ccw"></i>
+                        继续生产
+                    </button>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">前台并发槽位信息</span>
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #60a5fa;">
+                            <i data-lucide="activity"></i>
+                        </div>
+                    </div>
+                    <div id="stat_foreground_slots" class="stat-value" style="color: #60a5fa; font-size: 30px;">0/0</div>
+                    <div id="stat_foreground_slots_meta" style="font-size: 13px; color: var(--text-dim);">前台占用/最大前台并发</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 配置 -->
+        <div id="config" class="page-view">
+            <div class="page-header">
+                <h1>系统配置</h1>
+                <p>全局代理、并发与邮箱来源配置（保存后立即生效，无需重启服务）</p>
+            </div>
+            <div class="config-grid">
+                <!-- 左：网络与并发 -->
+                <div class="panel">
+                    <h2 class="panel-title">网络与并发</h2>
+                    <div class="form-group" style="margin-top: 24px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                            <label style="margin: 0;">代理服务器地址（PROXY URL）</label>
+                            <button type="button" class="btn btn-success" style="padding:6px 12px; font-size:13px;" onclick="batchTestProxies()">
+                                <i data-lucide="zap"></i>
+                                批量测试
+                            </button>
+                        </div>
+                        <textarea id="proxy" rows="6" class="asset-input" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; min-height: 130px; resize: vertical;"
+                            placeholder="一行一条，支持 http(s) / socks5；可在用户名里写 {session} 占位符走 sticky session
+http://user:pass@host:port
+http://USER-session-{session}:PASS@your-proxy.example.com:1000"></textarea>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">
+                            一行一条，每次任务随机抽一条；含 <code>{session}</code> 自动替换成随机串以走 sticky session（保持同一出口 IP）。
+                        </p>
+                        <div id="proxy_test_panel" style="display:none; margin-top: 12px; border:1px solid var(--divider); border-radius:10px; overflow:hidden;">
+                            <div style="padding: 8px 12px; background: var(--surface-soft); display:flex; justify-content:space-between; align-items:center;">
+                                <span id="proxy_test_summary" style="font-size:13px; color: var(--text-secondary);">测试中...</span>
+                                <button type="button" class="btn-delete" onclick="document.getElementById('proxy_test_panel').style.display='none'">
+                                    <i data-lucide="x"></i>
+                                </button>
+                            </div>
+                            <table class="data-table" style="margin: 0;">
+                                <thead>
+                                    <tr>
+                                        <th width="50px" style="text-align:center">#</th>
+                                        <th width="80px" style="text-align:center">状态</th>
+                                        <th width="160px">出口 IP</th>
+                                        <th width="100px" style="text-align:center">延迟</th>
+                                        <th>代理 URL</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="proxy_test_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>最大并发激活数</label>
+                        <input type="number" id="max_concurrent_activations" min="1" step="1" class="asset-input" placeholder="1">
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">超过该数量时，前台将提示「当前任务过多，请稍后再试」。</p>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>最大后台并发数（成品线程数）</label>
+                        <input type="number" id="max_background_concurrent" min="1" step="1" class="asset-input" placeholder="1">
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">后台脚本生产「成品」时的最大并发线程数。</p>
+                    </div>
+                    <div class="form-group" style="margin-top: 22px;">
+                        <div class="toggle-field">
+                            <div class="toggle-label">
+                                <span>维护模式</span>
+                            </div>
+                            <label class="toggle-control">
+                                <input type="checkbox" id="maintenance_mode" class="toggle-input">
+                                <span class="toggle-switch"></span>
+                            </label>
+                        </div>
+                        <p id="maintenance_mode_hint" style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">开启后立即拒绝所有新任务。</p>
+                    </div>
+                </div>
+
+                <!-- 右：邮箱来源 -->
+                <div class="panel">
+                    <h2 class="panel-title">邮箱来源</h2>
+                    <p style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">
+                        选择新账号注册时使用的邮箱来源。「微软邮箱池」需先在「邮箱管理」中导入 OAuth2 凭证。
+                    </p>
+
+                    <div class="email-source-options" style="margin-top: 18px;">
+                        <label class="email-source-card">
+                            <input type="radio" name="email_source" id="email_source_random" value="random">
+                            <div class="email-source-body">
+                                <div class="email-source-title">
+                                    <i data-lucide="shuffle"></i>
+                                    <span>自定义随机邮箱</span>
+                                </div>
+                                <div class="email-source-desc">
+                                    使用下方域名随机生成邮箱地址，验证码通过中转 API 拉取（与该域名同侧的 IMAP 网关）。
+                                </div>
+                            </div>
+                        </label>
+                        <label class="email-source-card">
+                            <input type="radio" name="email_source" id="email_source_pool" value="pool">
+                            <div class="email-source-body">
+                                <div class="email-source-title">
+                                    <i data-lucide="mail-check"></i>
+                                    <span>微软邮箱池（IMAP / OAuth2）</span>
+                                </div>
+                                <div class="email-source-desc">
+                                    从「邮箱管理」中按导入顺序取一条<strong>未注册</strong>邮箱，使用 IMAP 直连微软取件，可扫描垃圾箱。每个邮箱仅在<strong>注册成功</strong>后被标记。
+                                </div>
+                            </div>
+                        </label>
+                        <label class="email-source-card">
+                            <input type="radio" name="email_source" id="email_source_inbox" value="inbox">
+                            <div class="email-source-body">
+                                <div class="email-source-title">
+                                    <i data-lucide="inbox"></i>
+                                    <span>Inbox 临时邮箱（cloudflare_temp_email）</span>
+                                </div>
+                                <div class="email-source-desc">
+                                    每次注册自动调用 <code>POST /api/new_address</code> 创建一个临时邮箱，OTP 通过 <code>GET /api/mails</code> 拉取。无需邮箱池，开箱即用。
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div id="random_email_options" style="margin-top: 18px;">
+                        <div class="form-group">
+                            <label>随机邮箱域名</label>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="color: var(--text-dim); font-size: 14px;">@</span>
+                                <input type="text" id="random_email_domain" class="asset-input" placeholder="chiyiyi.cloud" style="flex: 1;">
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">
+                                例如：<code>chiyiyi.cloud</code>、<code>example.com</code>。<strong>仅域名部分</strong>，不要带 <code>@</code>，保存后立即生效。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="inbox_email_options" style="margin-top: 18px;" data-disabled="1">
+                        <div class="form-group">
+                            <label>Inbox API 地址</label>
+                            <input type="text" id="inbox_api_base" class="asset-input" placeholder="https://temp-email-api.jzqkwl.com">
+                            <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">
+                                cloudflare_temp_email 的 API 后端，结尾不要带 <code>/</code>。
+                            </p>
+                        </div>
+                        <div class="form-group" style="margin-top: 14px;">
+                            <label>临时邮箱域名（单个，可选）</label>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="color: var(--text-dim); font-size: 14px;">@</span>
+                                <input type="text" id="inbox_email_domain" class="asset-input" placeholder="留空走默认域名（如 xm.jzqkwl.com）" style="flex: 1;">
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">
+                                单一域名兜底；若下方"多域名候选"非空则优先随机使用多域名候选。
+                            </p>
+                        </div>
+                        <div class="form-group" style="margin-top: 14px;">
+                            <label>多域名候选（一行一个，随机轮换）</label>
+                            <textarea id="inbox_email_domains" class="asset-input" rows="4"
+                                      placeholder="一行一个，例如：&#10;mail.jzqkwl.com&#10;xm.jzqkwl.com"
+                                      style="width: 100%; font-family: monospace; resize: vertical;"></textarea>
+                            <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">
+                                每次注册时<strong>随机挑一个</strong>使用，避免单一域名被风控/限频导致收不到验证码。新加域名直接换行追加即可。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="pool_email_options" style="margin-top: 22px;">
+                        <div class="form-group">
+                            <label>IMAP 主机</label>
+                            <input type="text" id="pool_email_imap_host" class="asset-input" placeholder="outlook.office365.com">
+                            <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">个人 Outlook / 365 通常用 <code>outlook.office365.com</code>。</p>
+                        </div>
+                        <div class="toggle-field" style="margin-top: 16px;">
+                            <div class="toggle-label">
+                                <span>取件包含垃圾箱 / Junk</span>
+                            </div>
+                            <label class="toggle-control">
+                                <input type="checkbox" id="pool_email_include_junk" class="toggle-input" checked>
+                                <span class="toggle-switch"></span>
+                            </label>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">
+                            OpenAI 验证码偶尔进 Junk，关闭会损失部分成功率。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-primary" onclick="saveAllConfigs()">
+                    <i data-lucide="save"></i>
+                    保存全局配置
+                </button>
+            </div>
+
+            <div class="panel" style="margin-top: 24px;">
+                <h2 class="panel-title">修改后台密码</h2>
+                <div class="form-group" style="margin-top: 24px;">
+                    <label>原密码</label>
+                    <input type="password" id="current_password" placeholder="请输入原密码" class="asset-input"
+                        autocomplete="current-password">
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>新密码</label>
+                    <input type="password" id="new_password" placeholder="请输入新密码，至少 6 位" class="asset-input"
+                        autocomplete="new-password">
+                </div>
+                <button class="btn btn-primary" style="margin-top: 16px;" onclick="changeAdminPassword()">
+                    <i data-lucide="key-round"></i>
+                    修改密码
+                </button>
+            </div>
+        </div>
+
+        <!-- 号码管理 -->
+        <div id="phones" class="page-view">
+            <div class="page-header">
+                <h1>手机号池管理</h1>
+                <p>管理用于验证的手机号池与 SMS 服务密钥</p>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">手机号池列表</h2>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <button class="btn btn-success" onclick="toggleImportBox('phone_pool')">
+                            <i data-lucide="upload"></i>
+                            批量导入
+                        </button>
+                        <button class="btn btn-success" onclick="addAssetRow('phone_pool')">
+                            <i data-lucide="plus"></i>
+                            添加号码
+                        </button>
+                    </div>
+                </div>
+                <div id="phone_import_box" class="import-box">
+                    <div class="import-box-header">
+                        <div class="import-box-title">批量导入手机号池</div>
+                    </div>
+                    <div class="import-box-tip">
+                        每行一条，格式：`号码-APIKEY`。例如：`3502474143-4a4d713c8077b0bc82a0b05ed07d16fa`
+                    </div>
+                    <textarea id="phone_import_text" class="import-textarea"
+                        placeholder="3502474143-4a4d713c8077b0bc82a0b05ed07d16fa&#10;4642800105-8e436de811e26c9c89c1508997339852"></textarea>
+                    <div class="import-actions">
+                        <button class="btn btn-success" onclick="importAssets('phone_pool')">
+                            <i data-lucide="check-check"></i>
+                            解析并导入
+                        </button>
+                    </div>
+                </div>
+                <div class="batch-actions">
+                    <div class="filter-dropdown" data-filter="phone_pool">
+                        <button class="filter-trigger" onclick="toggleFilterMenu('phone_pool')"><span>全部状态</span><i
+                                data-lucide="chevron-down"></i></button>
+                        <div class="filter-menu">
+                            <button class="filter-option active"
+                                onclick="selectFilter('phone_pool', 'all', '全部状态')">全部状态</button>
+                            <button class="filter-option"
+                                onclick="selectFilter('phone_pool', 'normal', '正常')">正常</button>
+                            <button class="filter-option"
+                                onclick="selectFilter('phone_pool', 'invalid', '已作废')">已作废</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="togglePageSelection('phone_pool')">
+                        <i data-lucide="check-square"></i>
+                        本页全选/取消
+                    </button>
+                    <button class="btn btn-success" onclick="batchDeletePhones()">
+                        <i data-lucide="trash-2"></i>
+                        删除
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="select-header">选择</th>
+                                <th width="33%">号码</th>
+                                <th>SMS API KEY</th>
+                                <th width="110px" style="text-align:center">成功次数</th>
+                                <th width="110px" style="text-align:center">状态</th>
+                                <th width="120px" style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="phone_pool_body"></tbody>
+                    </table>
+                </div>
+                <div id="phone_pool_pagination" class="table-footer"></div>
+                <button class="btn btn-primary" style="margin-top:32px; width: 100%; justify-content: center;"
+                    onclick="saveAllConfigs()">
+                    <i data-lucide="refresh-cw"></i>
+                    同步手机号池到数据库
+                </button>
+            </div>
+        </div>
+
+        <!-- 银行卡管理 -->
+        <div id="cards" class="page-view">
+            <div class="page-header">
+                <h1>银行卡池管理</h1>
+                <p>管理支付结算所用的银行卡资源</p>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">银行卡池列表</h2>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <button class="btn btn-success" onclick="toggleImportBox('card_pool')">
+                            <i data-lucide="upload"></i>
+                            批量导入
+                        </button>
+                        <button class="btn btn-success" onclick="addAssetRow('card_pool')">
+                            <i data-lucide="plus"></i>
+                            添加新卡片
+                        </button>
+                    </div>
+                </div>
+                <div id="card_import_box" class="import-box">
+                    <div class="import-box-header">
+                        <div class="import-box-title">批量导入银行卡池</div>
+                    </div>
+                    <div class="import-box-tip">
+                        每行一条，格式：`卡号-有效期-安全码`。例如：`5349336392059744-0431-738`，其中有效期填写 `MMYY`。
+                    </div>
+                    <textarea id="card_import_text" class="import-textarea"
+                        placeholder="5349336392059744-0431-738&#10;5349336383247282-0431-937"></textarea>
+                    <div class="import-actions">
+                        <button class="btn btn-success" onclick="importAssets('card_pool')">
+                            <i data-lucide="check-check"></i>
+                            解析并导入
+                        </button>
+                    </div>
+                </div>
+                <div class="batch-actions">
+                    <div class="filter-dropdown" data-filter="card_pool">
+                        <button class="filter-trigger" onclick="toggleFilterMenu('card_pool')"><span>全部状态</span><i
+                                data-lucide="chevron-down"></i></button>
+                        <div class="filter-menu">
+                            <button class="filter-option active"
+                                onclick="selectFilter('card_pool', 'all', '全部状态')">全部状态</button>
+                            <button class="filter-option"
+                                onclick="selectFilter('card_pool', 'normal', '正常')">正常</button>
+                            <button class="filter-option"
+                                onclick="selectFilter('card_pool', 'invalid', '已作废')">已作废</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="togglePageSelection('card_pool')">
+                        <i data-lucide="check-square"></i>
+                        本页全选/取消
+                    </button>
+                    <button class="btn btn-success" onclick="batchDeleteCards()">
+                        <i data-lucide="trash-2"></i>
+                        删除
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="select-header">选择</th>
+                                <th>银行卡号</th>
+                                <th width="200px">有效期 (MM/YY)</th>
+                                <th width="150px">CVC</th>
+                                <th width="110px" style="text-align:center">成功次数</th>
+                                <th width="110px" style="text-align:center">状态</th>
+                                <th width="120px" style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="card_pool_body"></tbody>
+                    </table>
+                </div>
+                <div id="card_pool_pagination" class="table-footer"></div>
+                <button class="btn btn-primary" style="margin-top:32px; width: 100%; justify-content: center;"
+                    onclick="saveAllConfigs()">
+                    <i data-lucide="refresh-cw"></i>
+                    同步银行卡池到数据库
+                </button>
+            </div>
+        </div>
+
+        <!-- 邮箱池 -->
+        <div id="pool_emails" class="page-view">
+            <div class="page-header">
+                <h1>邮箱管理</h1>
+                <p>批量导入 mail.txt（每行：邮箱 + Tab 或空格 + 密码），查看收件箱与垃圾箱邮件；请在「系统配置」中开关邮箱池与 IMAP 参数。</p>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">批量导入</h2>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <label class="btn btn-success" style="cursor:pointer;">
+                            <i data-lucide="file-up"></i>
+                            选择 mail.txt
+                            <input type="file" accept=".txt,text/plain" id="pool_mail_file_input" style="display:none"
+                                onchange="handlePoolMailFileImport(event)">
+                        </label>
+                        <button type="button" class="btn btn-primary" onclick="submitPoolMailImport()">
+                            <i data-lucide="upload"></i>
+                            导入到数据库
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="loadPoolEmails(true)">
+                            <i data-lucide="refresh-cw"></i>
+                            刷新列表
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>粘贴内容（与 mail.txt 相同格式）</label>
+                    <textarea id="pool_mail_import_text" class="asset-input" rows="8"
+                        placeholder="支持两种格式（每行一条）：&#10;1) Outlook OAuth2:  邮箱----账号密码----client_id----refresh_token&#10;2) 简单密码:        user@outlook.com  应用密码"></textarea>
+                    <p style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">以 # 开头的行会被忽略。重复邮箱会更新密码 / refresh_token，不会清除「已注册」状态。微软个人邮箱普遍要求 OAuth2 才能 IMAP，建议使用 4 段格式。</p>
+                </div>
+            </div>
+            <div class="panel">
+                <h2 class="panel-title">邮箱列表</h2>
+                <div class="table-wrapper" style="margin-top: 20px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="min-width:220px;">邮箱</th>
+                                <th width="120px" style="text-align:center">认证方式</th>
+                                <th width="130px" style="text-align:center">注册状态</th>
+                                <th width="110px" style="text-align:center">占用</th>
+                                <th width="200px">注册时间</th>
+                                <th width="240px" style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pool_emails_body"></tbody>
+                    </table>
+                </div>
+                <p id="pool_emails_empty_hint" style="display:none; margin-top:16px; color: var(--text-dim);">暂无邮箱，请先导入 mail.txt。</p>
+            </div>
+            <div id="pool_mail_preview_panel" class="panel" style="display:none;">
+                <div class="panel-header">
+                    <h2 class="panel-title" id="pool_mail_preview_title">邮件预览</h2>
+                    <button type="button" class="btn btn-success" onclick="closePoolMailPreview()">
+                        <i data-lucide="x"></i>
+                        关闭
+                    </button>
+                </div>
+                <div class="table-wrapper" style="margin-top: 16px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="140px">文件夹</th>
+                                <th style="min-width:200px;">主题</th>
+                                <th style="min-width:160px;">发件人</th>
+                                <th width="200px">时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pool_mail_preview_body"></tbody>
+                    </table>
+                </div>
+                <p style="font-size: 13px; color: var(--text-dim); margin-top: 12px;">列表按服务端 INTERNALDATE / 信封日期从新到旧排序；垃圾箱需在「系统配置」中勾选包含 Junk。</p>
+            </div>
+        </div>
+
+        <!-- CDK 管理 -->
+        <div id="cdks" class="page-view">
+            <div class="page-header">
+                <h1>CDK 激活码管理</h1>
+                <p>生成并管理用于前台兑换的激活码</p>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">激活码列表</h2>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                        <button class="btn btn-success" onclick="toggleImportBox('cdk')">
+                            <i data-lucide="upload"></i>
+                            批量导入
+                        </button>
+                        <input type="text" id="cdk_search" class="asset-input" placeholder="搜索激活码 / 卡密"
+                            style="width: 220px;" oninput="handleCdkSearch(this.value)">
+                        <div class="filter-dropdown" data-filter="cdk_generate_type" style="min-width: 110px;">
+                            <button class="filter-trigger" onclick="toggleFilterMenu('cdk_generate_type')">
+                                <span id="current_cdk_type_label">自助</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <div id="filter_menu_cdk_generate_type" class="filter-menu">
+                                <button class="filter-option active" onclick="selectGenerateType('自助')">自助</button>
+                                <button class="filter-option" onclick="selectGenerateType('成品')">成品</button>
+                            </div>
+                        </div>
+                        <input type="number" id="cdk_count" value="1" min="1" max="100" class="asset-input"
+                            style="width: 80px;">
+                        <button class="btn btn-primary" onclick="generateCDKs(this)">
+                            <i data-lucide="sparkles"></i>
+                            生成
+                        </button>
+                    </div>
+                </div>
+                <div id="cdk_import_box" class="import-box">
+                    <div class="import-box-header">
+                        <div class="import-box-title">批量导入激活码</div>
+                    </div>
+                    <div class="import-box-tip">
+                        支持每行一条，或使用逗号、空格分隔。系统会自动去重并忽略空行。
+                    </div>
+                    <textarea id="cdk_import_text" class="import-textarea"
+                        placeholder="ABCD1234EFGH&#10;IJKL5678MNOP&#10;QRST9012UVWX"></textarea>
+                    <div class="import-actions">
+                        <button class="btn btn-success" onclick="importCDKs()">
+                            <i data-lucide="check-check"></i>
+                            解析并导入
+                        </button>
+                    </div>
+                </div>
+                <div class="batch-actions">
+                    <div class="filter-dropdown" data-filter="cdk">
+                        <button class="filter-trigger" onclick="toggleFilterMenu('cdk')"><span>全部状态</span><i
+                                data-lucide="chevron-down"></i></button>
+                        <div class="filter-menu">
+                            <button class="filter-option active"
+                                onclick="selectFilter('cdk', 'all', '全部状态')">全部状态</button>
+                            <button class="filter-option" onclick="selectFilter('cdk', 'unused', '未使用')">未使用</button>
+                            <button class="filter-option" onclick="selectFilter('cdk', 'used', '已使用')">已使用</button>
+                            <button class="filter-option" onclick="selectFilter('cdk', 'unshipped', '未出库')">未出库</button>
+                            <button class="filter-option" onclick="selectFilter('cdk', 'shipped', '已出库')">已出库</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="togglePageSelection('cdk')">
+                        <i data-lucide="check-square"></i>
+                        本页全选/取消
+                    </button>
+                    <button class="btn btn-success" onclick="batchCopyCDKs()">
+                        <i data-lucide="copy"></i>
+                        复制
+                    </button>
+                    <button class="btn btn-success" onclick="batchDeleteCDKs()">
+                        <i data-lucide="trash-2"></i>
+                        删除
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="select-header">选择</th>
+                                <th>激活码内容</th>
+                                <th width="120px" style="text-align:center">类型</th>
+                                <th width="120px" style="text-align:center">是否出库</th>
+                                <th width="140px">状态</th>
+                                <th width="180px">使用时间</th>
+                                <th width="100px" style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cdk_body"></tbody>
+                    </table>
+                </div>
+                <div id="cdk_pagination" class="table-footer"></div>
+            </div>
+        </div>
+
+        <!-- 成品号池 -->
+        <div id="products" class="page-view">
+            <div class="page-header">
+                <h1>成品号池</h1>
+                <p>已激活成功的成品账号资源</p>
+            </div>
+            <div class="panel">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div class="panel-title">账号资源管理</div>
+                    <div class="panel-actions" style="display: flex; gap: 12px; align-items: center;">
+                        <input type="number" id="product_gen_count" value="1" min="1" max="100" class="asset-input" style="width: 80px;" placeholder="数量">
+                        <button class="btn btn-primary" onclick="startProductGeneration(this)">
+                            <i data-lucide="play"></i>
+                            开始生产
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="product_gen_progress_container" class="panel" style="display: none; margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <span id="product_gen_status" style="font-size: 14px; color: var(--text-main); font-weight: 600;">正在准备生产环境...</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button type="button" class="btn btn-delete" id="product_gen_stop_btn" style="display: none;" onclick="stopAdminProductBatch({ useCurrentJob: true })">
+                                <i data-lucide="square"></i> 停止生产
+                            </button>
+                            <span id="product_gen_percent" style="font-size: 14px; color: var(--accent); font-weight: 700;">0%</span>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
+                        <div id="product_gen_bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), #a855f7); transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+
+                <div class="batch-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 16px;">
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <input type="text" id="product_search" class="asset-input" placeholder="搜索邮箱账号" style="width: 220px;" oninput="handleProductSearch(this.value)">
+                        <div class="filter-dropdown" data-filter="product">
+                            <button class="filter-trigger" onclick="toggleFilterMenu('product')"><span>全部状态</span><i data-lucide="chevron-down"></i></button>
+                            <div class="filter-menu">
+                                <button class="filter-option active" onclick="selectFilter('product', 'all', '全部状态')">全部状态</button>
+                                <button class="filter-option" onclick="selectFilter('product', 'status_normal', '正常')">正常</button>
+                                <button class="filter-option" onclick="selectFilter('product', 'status_disabled', '封禁')">封禁</button>
+                                <button class="filter-option" onclick="selectFilter('product', 'shipped', '已出库')">已出库</button>
+                                <button class="filter-option" onclick="selectFilter('product', 'unshipped', '未出库')">未出库</button>
+                                <button class="filter-option" onclick="selectFilter('product', 'today', '今日生产')">今日生产</button>
+                                <button class="filter-option" onclick="selectFilter('product', 'yesterday', '昨日生产')">昨日生产</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn btn-success" onclick="togglePageSelection('product')">
+                            <i data-lucide="check-square"></i>
+                            本页全选/取消
+                        </button>
+                        <button class="btn btn-success" onclick="batchExportProducts()">
+                            <i data-lucide="download"></i>
+                            批量出库
+                        </button>
+                        <button class="btn btn-success" onclick="batchDeleteProducts()" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2);">
+                            <i data-lucide="trash-2"></i>
+                            删除
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="select-header" width="60px">选择</th>
+                                <th>邮箱账号</th>
+                                <th width="150px">使用CDK</th>
+                                <th width="180px">KEY</th>
+                                <th width="200px">生产时间</th>
+                                <th width="100px" style="text-align:center">状态</th>
+                                <th width="100px" style="text-align:center">出库</th>
+                                <th width="150px" style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product_body"></tbody>
+                    </table>
+                </div>
+                <div id="product_pagination" class="table-footer"></div>
+            </div>
+        </div>
+        <div id="logs" class="page-view">
+            <div class="page-header">
+                <h1>任务管理</h1>
+                <p>查看与管理数据库中的任务记录（含自助开通与后台成品生产）</p>
+            </div>
+            <div class="panel">
+                <div class="runtime-log-toolbar log-page-toolbar">
+                    <button type="button" class="btn btn-success" id="admin_refresh_pause_btn" onclick="toggleAdminDataRefresh()">
+                        <i data-lucide="pause"></i>
+                        <span id="admin_refresh_pause_label">停止自动刷新</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="manualRefreshAdminData()">
+                        <i data-lucide="refresh-cw"></i>
+                        立即刷新
+                    </button>
+                    <button type="button" class="btn btn-delete" onclick="stopAdminProductBatch({})">
+                        <i data-lucide="square"></i>
+                        停止成品批量生产
+                    </button>
+                    <span class="log-page-toolbar-hint">默认每 3 秒自动拉取概览与下方表格；停止后仅在你点击「立即刷新」时更新。可在表格中删除单条任务记录。「停止成品批量」仅针对后台批量成品任务；前台自助开通由子进程执行，无法在此强制杀进程，可开维护模式拒绝新单。</span>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>执行时间</th>
+                                <th>激活码</th>
+                                <th width="100px" style="text-align:center">类型</th>
+                                <th>Token 摘要</th>
+                                <th>任务信息</th>
+                                <th width="150px">进度</th>
+                                <th>状态</th>
+                                <th width="88px" style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log_body"></tbody>
+                    </table>
+                </div>
+                <div id="log_pagination" class="table-footer"></div>
+            </div>
+        </div>
+
+        <div id="runtime_logs" class="page-view">
+            <div class="page-header">
+                <h1>运行日志</h1>
+                <p>子进程标准输出、注册/开通脚本详情与任务节点日志（内存环形缓冲，重启后清空）</p>
+            </div>
+            <div class="panel">
+                <div class="runtime-log-toolbar">
+                    <label class="runtime-log-toggle">
+                        <input type="checkbox" id="runtime_log_autoscroll" checked>
+                        <span>自动滚动到底部</span>
+                    </label>
+                    <label class="runtime-log-toggle">
+                        <input type="checkbox" id="runtime_log_pause">
+                        <span>暂停拉取</span>
+                    </label>
+                    <button type="button" class="btn btn-primary" id="runtime_log_refresh_btn" onclick="refreshRuntimeLogsManual()">
+                        <i data-lucide="refresh-cw"></i> 立即刷新
+                    </button>
+                    <button type="button" class="btn btn-delete" id="runtime_log_clear_btn" onclick="clearRuntimeLogs()">
+                        <i data-lucide="trash-2"></i> 清空日志
+                    </button>
+                </div>
+                <p class="runtime-log-hint">与「任务管理」中的数据库记录不同：此处为实时流水，便于排查 Playwright / 子进程输出；筛选 Job 可在文本内搜索。</p>
+                <div class="runtime-log-pre-wrap">
+                    <pre id="runtime_log_pre" class="runtime-log-pre" spellcheck="false"></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const TOKEN_KEY = 'plus_admin_token';
+        const statusMap = {
+            success: { class: 'status-success' },
+            failed: { class: 'status-failed' },
+            running: { class: 'status-running' },
+            card_invalid: { class: 'status-warning' }
+        };
+
+        let phonePool = [];
+        let cardPool = [];
+        let cdkPool = [];
+        let productPool = [];
+        let poolEmailsList = [];
+        const selectedItems = {
+            phone_pool: new Set(),
+            card_pool: new Set(),
+            cdk: new Set(),
+            product: new Set()
+        };
+        const tableFilters = {
+            phone_pool: 'all',
+            card_pool: 'all',
+            cdk: 'all',
+            product: 'all'
+        };
+        const tableSearch = {
+            cdk: '',
+            product: ''
+        };
+        let adminRefreshTimer = null;
+        let uptimeTickTimer = null;
+        let uptimeBaseSeconds = 0;
+        let uptimeBaseAt = 0;
+        window.__adminLogs = [];
+        window.__adminRuntime = { active_activation_jobs: 0 };
+        let maintenanceModeSaving = false;
+        let lastMaintenanceModeValue = false;
+
+        const paginationState = {
+            phone_pool: { page: 1, pageSize: 10 },
+            card_pool: { page: 1, pageSize: 10 },
+            cdk: { page: 1, pageSize: 12 },
+            product: { page: 1, pageSize: 12 },
+            log: { page: 1, pageSize: 12 }
+        };
+
+        const RUNTIME_LOG_TEXT_CAP = 1_200_000;
+        let runtimeLogPollTimer = null;
+        let runtimeLogAfter = 0;
+        let runtimeLogText = '';
+
+        /** 后台定时 loadData（含任务管理列表）；为便于阅读可暂停 */
+        let adminDataRefreshPaused = false;
+        let adminDataRefreshTimer = null;
+
+        /** 当前成品批量生产 WebSocket 对应的 jobKey，用于「停止生产」 */
+        window.__adminProductGenJobKey = '';
+
+        function formatRuntimeLogTs(ts) {
+            try {
+                const d = new Date(Number(ts) || 0);
+                const hh = String(d.getHours()).padStart(2, '0');
+                const mm = String(d.getMinutes()).padStart(2, '0');
+                const ss = String(d.getSeconds()).padStart(2, '0');
+                return `${hh}:${mm}:${ss}`;
+            } catch (_) {
+                return '--:--:--';
+            }
+        }
+
+        const RUNTIME_LOG_SOURCE_MAP = {
+            'fork/register_openai.js': '注册',
+            'fork/oauth_login.js': '协议',
+            'fork/index.js': '结账',
+            'product': '流程',
+            'task': '任务',
+            'server': '服务',
+            'system': '系统'
+        };
+
+        function formatRuntimeLogSource(entry) {
+            const raw = String(entry.source || entry.level || '').trim();
+            if (RUNTIME_LOG_SOURCE_MAP[raw]) {
+                return RUNTIME_LOG_SOURCE_MAP[raw];
+            }
+            // 兜底：fork/xxx.js → 提取文件名前 6 个字符
+            const forkMatch = raw.match(/^fork\/([\w.-]+)$/);
+            if (forkMatch) {
+                return forkMatch[1].replace(/\.js$/, '').slice(0, 8);
+            }
+            return raw.slice(0, 8);
+        }
+
+        function formatRuntimeLogJob(jobKey) {
+            const k = String(jobKey || '').trim();
+            if (!k) {
+                return '—';
+            }
+            // 取末 8 位作为短码
+            return k.slice(-8);
+        }
+
+        function formatRuntimeLogLine(entry) {
+            const t = formatRuntimeLogTs(entry.ts);
+            const j = formatRuntimeLogJob(entry.jobKey);
+            const src = formatRuntimeLogSource(entry);
+            return `${t}  ${j}  ${src}  ${entry.text}`;
+        }
+
+        function appendRuntimeLogEntries(entries) {
+            if (!entries || entries.length === 0) {
+                return;
+            }
+            const chunk = entries.map(formatRuntimeLogLine).join('\n') + '\n';
+            runtimeLogText += chunk;
+            if (runtimeLogText.length > RUNTIME_LOG_TEXT_CAP) {
+                runtimeLogText = runtimeLogText.slice(-Math.floor(RUNTIME_LOG_TEXT_CAP * 0.85));
+            }
+            const pre = document.getElementById('runtime_log_pre');
+            if (!pre) {
+                return;
+            }
+            pre.textContent = runtimeLogText;
+            const autoscroll = document.getElementById('runtime_log_autoscroll');
+            const wrap = pre.parentElement;
+            if (autoscroll && autoscroll.checked && wrap) {
+                wrap.scrollTop = wrap.scrollHeight;
+            }
+        }
+
+        function stopRuntimeLogStream() {
+            if (runtimeLogPollTimer) {
+                clearInterval(runtimeLogPollTimer);
+                runtimeLogPollTimer = null;
+            }
+        }
+
+        async function fetchRuntimeLogsTail() {
+            const res = await authFetch('/api/admin/runtime-logs?tail=1&limit=1500');
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.message || '加载失败');
+            }
+            runtimeLogText = (data.entries || []).map(formatRuntimeLogLine).join('\n');
+            if (runtimeLogText) {
+                runtimeLogText += '\n';
+            }
+            runtimeLogAfter = Number(data.nextAfter || 0);
+            const pre = document.getElementById('runtime_log_pre');
+            if (pre) {
+                pre.textContent = runtimeLogText;
+                const wrap = pre.parentElement;
+                const autoscroll = document.getElementById('runtime_log_autoscroll');
+                if (autoscroll && autoscroll.checked && wrap) {
+                    wrap.scrollTop = wrap.scrollHeight;
+                }
+            }
+        }
+
+        async function fetchRuntimeLogsIncremental() {
+            const pause = document.getElementById('runtime_log_pause');
+            if (pause && pause.checked) {
+                return;
+            }
+            try {
+                const res = await authFetch(`/api/admin/runtime-logs?after=${runtimeLogAfter}&limit=1000`);
+                const data = await res.json();
+                if (!data.success || !data.entries || data.entries.length === 0) {
+                    if (data.success && data.nextAfter != null) {
+                        runtimeLogAfter = Number(data.nextAfter);
+                    }
+                    return;
+                }
+                appendRuntimeLogEntries(data.entries);
+                runtimeLogAfter = Number(data.nextAfter || runtimeLogAfter);
+            } catch (_) {
+                /* 静默失败，下一轮再试 */
+            }
+        }
+
+        function startRuntimeLogStream() {
+            stopRuntimeLogStream();
+            fetchRuntimeLogsTail().catch(() => { });
+            runtimeLogPollTimer = setInterval(() => {
+                fetchRuntimeLogsIncremental();
+            }, 2000);
+        }
+
+        async function refreshRuntimeLogsManual() {
+            try {
+                await fetchRuntimeLogsTail();
+                showMessage('运行日志已刷新', 'success');
+            } catch (error) {
+                showMessage(error.message || '刷新失败', 'error');
+            }
+            lucide.createIcons();
+        }
+
+        function updateAdminDataRefreshButton() {
+            const btn = document.getElementById('admin_refresh_pause_btn');
+            const label = document.getElementById('admin_refresh_pause_label');
+            if (!btn || !label) {
+                return;
+            }
+            const paused = adminDataRefreshPaused;
+            label.textContent = paused ? '恢复自动刷新' : '停止自动刷新';
+            const iconName = paused ? 'play' : 'pause';
+            const icon = btn.querySelector('i[data-lucide]');
+            if (icon) {
+                icon.setAttribute('data-lucide', iconName);
+            }
+            btn.classList.toggle('btn-success', !paused);
+            btn.classList.toggle('btn-secondary', paused);
+            lucide.createIcons();
+        }
+
+        function toggleAdminDataRefresh() {
+            adminDataRefreshPaused = !adminDataRefreshPaused;
+            updateAdminDataRefreshButton();
+            showMessage(
+                adminDataRefreshPaused
+                    ? '已停止自动刷新：概览与各列表（含任务管理）不再每 3 秒更新'
+                    : '已恢复每 3 秒自动刷新',
+                'success'
+            );
+        }
+
+        async function manualRefreshAdminData() {
+            try {
+                await loadData(false);
+                showMessage('数据已刷新', 'success');
+            } catch (error) {
+                showMessage(error.message || '刷新失败', 'error');
+            }
+            lucide.createIcons();
+        }
+
+        async function stopAdminProductBatch(opts = {}) {
+            const useCurrent = Boolean(opts.useCurrentJob);
+            const jobKey = useCurrent ? String(window.__adminProductGenJobKey || '').trim() : '';
+            try {
+                const res = await authFetch('/api/admin/products/generate-stop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jobKey ? { jobKey } : {})
+                });
+                const raw = await res.text();
+                let data = {};
+                if (raw) {
+                    try {
+                        data = JSON.parse(raw);
+                    } catch (_) {
+                        /* 非 JSON（如 404 返回 HTML） */
+                    }
+                }
+                if (!res.ok) {
+                    const hint =
+                        res.status === 404
+                            ? '接口不存在，请部署含「停止成品批量」的后端并重启 Node 服务'
+                            : '';
+                    throw new Error(data.message || hint || `请求失败（${res.status}）`);
+                }
+                if (data && data.success === false) {
+                    throw new Error(data.message || '操作失败');
+                }
+                const n = Number(data.stopped || 0);
+                showMessage(data.message || '操作完成', n > 0 ? 'success' : 'warning');
+            } catch (e) {
+                showMessage(e.message || '停止失败', 'error');
+            }
+            lucide.createIcons();
+        }
+
+        function setProductGenStopVisible(visible) {
+            const stopBtn = document.getElementById('product_gen_stop_btn');
+            if (stopBtn) {
+                stopBtn.style.display = visible ? 'inline-flex' : 'none';
+            }
+        }
+
+        async function clearRuntimeLogs() {
+            const ok = await showAdminConfirm(
+                '确定清空当前内存中的运行日志？（不影响任务管理数据库表）',
+                '清空运行日志'
+            );
+            if (!ok) {
+                return;
+            }
+            try {
+                const res = await authFetch('/api/admin/runtime-logs/clear', { method: 'POST' });
+                const data = await res.json();
+                if (!data.success) {
+                    throw new Error(data.message || '清空失败');
+                }
+                runtimeLogText = '';
+                runtimeLogAfter = 0;
+                const pre = document.getElementById('runtime_log_pre');
+                if (pre) {
+                    pre.textContent = '';
+                }
+                await fetchRuntimeLogsTail();
+                showMessage(data.message || '已清空', 'success');
+            } catch (error) {
+                showMessage(error.message || '清空失败', 'error');
+            }
+            lucide.createIcons();
+        }
+
+        function getAdminToken() {
+            return localStorage.getItem(TOKEN_KEY);
+        }
+
+        function setAdminToken(token) {
+            if (token) {
+                localStorage.setItem(TOKEN_KEY, token);
+            }
+        }
+
+        function clearAdminToken() {
+            localStorage.removeItem(TOKEN_KEY);
+        }
+
+        function formatDurationText(totalSeconds) {
+            const seconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainSeconds = seconds % 60;
+
+            if (days > 0) return `${days}天 ${hours}时 ${minutes}分`;
+            if (hours > 0) return `${hours}时 ${minutes}分 ${remainSeconds}秒`;
+            if (minutes > 0) return `${minutes}分 ${remainSeconds}秒`;
+            return `${remainSeconds}秒`;
+        }
+
+        function renderUptimeTick() {
+            const currentSeconds = uptimeBaseSeconds + Math.max(0, Math.floor((Date.now() - uptimeBaseAt) / 1000));
+            document.getElementById('stat_uptime_text').innerText = formatDurationText(currentSeconds);
+        }
+
+        function getCurrentUptimeSeconds() {
+            if (!uptimeBaseAt) {
+                return 0;
+            }
+            return uptimeBaseSeconds + Math.max(0, Math.floor((Date.now() - uptimeBaseAt) / 1000));
+        }
+
+        function startUptimeTicker(baseSeconds) {
+            const nextBaseSeconds = Math.max(0, Math.floor(Number(baseSeconds) || 0));
+            const currentSeconds = getCurrentUptimeSeconds();
+            if (uptimeBaseAt && nextBaseSeconds <= currentSeconds) {
+                return;
+            }
+            uptimeBaseSeconds = nextBaseSeconds;
+            uptimeBaseAt = Date.now();
+            renderUptimeTick();
+            if (uptimeTickTimer) {
+                clearInterval(uptimeTickTimer);
+            }
+            uptimeTickTimer = setInterval(renderUptimeTick, 1000);
+        }
+
+        function redirectToLogin() {
+            clearAdminToken();
+            location.href = '/admin-login';
+        }
+
+        function logoutAdmin() {
+            redirectToLogin();
+        }
+
+        async function authFetch(url, options = {}) {
+            const token = getAdminToken();
+            if (!token) {
+                redirectToLogin();
+                throw new Error('未登录');
+            }
+
+            const headers = { ...(options.headers || {}), Authorization: `Bearer ${token}` };
+            const response = await fetch(url, { ...options, headers });
+            if (response.status === 401) {
+                redirectToLogin();
+                throw new Error('登录已失效');
+            }
+            return response;
+        }
+
+        function renderStatus(status) {
+            const cfg = statusMap[status] || { class: '' };
+            return `<span class="status-badge ${cfg.class}">${String(status || '').toUpperCase()}</span>`;
+        }
+
+        function showMessage(content, type = 'success') {
+            const container = document.getElementById('message_container');
+            if (!container) return;
+            const item = document.createElement('div');
+            item.className = `message-item message-${type}`;
+            const iconMap = { success: 'check-circle-2', error: 'x-circle', warning: 'alert-triangle' };
+            item.innerHTML = `<i data-lucide="${iconMap[type] || 'info'}"></i><span>${content}</span>`;
+            container.appendChild(item);
+            lucide.createIcons();
+            setTimeout(() => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(-8px) scale(0.98)';
+                item.style.transition = '0.2s';
+                setTimeout(() => item.remove(), 220);
+            }, 2400);
+        }
+
+        let adminConfirmResolver = null;
+
+        function showAdminConfirm(message, title) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('admin_confirm_overlay');
+                const textEl = document.getElementById('admin_confirm_text');
+                const titleEl = document.getElementById('admin_confirm_title');
+                if (!overlay || !textEl) {
+                    resolve(false);
+                    return;
+                }
+                if (titleEl) {
+                    titleEl.textContent = title && String(title).trim() ? String(title).trim() : '请确认';
+                }
+                textEl.textContent = message;
+                overlay.classList.add('is-open');
+                overlay.setAttribute('aria-hidden', 'false');
+                adminConfirmResolver = resolve;
+                lucide.createIcons();
+                const okBtn = document.getElementById('admin_confirm_ok');
+                if (okBtn) {
+                    setTimeout(() => okBtn.focus(), 0);
+                }
+            });
+        }
+
+        function closeAdminConfirm(result) {
+            const overlay = document.getElementById('admin_confirm_overlay');
+            if (overlay) {
+                overlay.classList.remove('is-open');
+                overlay.setAttribute('aria-hidden', 'true');
+            }
+            const r = adminConfirmResolver;
+            adminConfirmResolver = null;
+            if (r) {
+                r(Boolean(result));
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && adminConfirmResolver) {
+                e.preventDefault();
+                closeAdminConfirm(false);
+            }
+        });
+
+        function getPageItems(list, stateKey) {
+            const state = paginationState[stateKey];
+            const items = Array.isArray(list) ? list : [];
+            const total = items.length;
+            const pageSize = state.pageSize;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            state.page = Math.min(Math.max(1, state.page), totalPages);
+            const start = (state.page - 1) * pageSize;
+            return {
+                items: items.slice(start, start + pageSize),
+                page: state.page,
+                pageSize,
+                total,
+                totalPages,
+                start
+            };
+        }
+
+        function isAssetActive(item) {
+            return item && item.is_active !== 0 && item.status !== 'invalid';
+        }
+
+        function getFilteredItems(type) {
+            const filter = tableFilters[type] || 'all';
+            const source = type === 'phone_pool' ? phonePool : type === 'card_pool' ? cardPool : type === 'cdk' ? cdkPool : productPool;
+            let result = source;
+            if (type === 'phone_pool' || type === 'card_pool') {
+                result = filter === 'all'
+                    ? source
+                    : source.filter((item) => filter === 'normal' ? isAssetActive(item) : !isAssetActive(item));
+                return result;
+            }
+            if (type === 'cdk') {
+                if (filter === 'used') {
+                    result = source.filter((item) => (typeof item === 'string' ? 'unused' : (item.status || 'unused')) === 'used');
+                } else if (filter === 'unused') {
+                    result = source.filter((item) => (typeof item === 'string' ? 'unused' : (item.status || 'unused')) !== 'used');
+                } else if (filter === 'shipped') {
+                    result = source.filter((item) => typeof item !== 'string' && Boolean(item.shipped));
+                } else if (filter === 'unshipped') {
+                    result = source.filter((item) => typeof item === 'string' || !item.shipped);
+                }
+
+                const keyword = String(tableSearch.cdk || '').trim().toUpperCase();
+                if (keyword) {
+                    result = result.filter((item) => {
+                        const code = typeof item === 'string' ? item : (item.code || '');
+                        return String(code).toUpperCase().includes(keyword);
+                    });
+                }
+            }
+            if (type === 'product') {
+                if (filter === 'today') {
+                    const todayStr = new Date().toLocaleString('zh-CN', { hour12: false }).split(' ')[0].replace(/\//g, '-');
+                    result = source.filter((item) => String(item.time).startsWith(todayStr));
+                } else if (filter === 'yesterday') {
+                    const y = new Date();
+                    y.setDate(y.getDate() - 1);
+                    const yStr = y.toLocaleString('zh-CN', { hour12: false }).split(' ')[0].replace(/\//g, '-');
+                    result = source.filter((item) => String(item.time).startsWith(yStr));
+                } else if (filter === 'status_normal') {
+                    result = source.filter((item) => item.status === '正常');
+                } else if (filter === 'status_disabled') {
+                    result = source.filter((item) => item.status === '封禁');
+                } else if (filter === 'shipped') {
+                    result = source.filter((item) => item.shipped);
+                } else if (filter === 'unshipped') {
+                    result = source.filter((item) => !item.shipped);
+                }
+                const keyword = String(tableSearch.product || '').trim().toUpperCase();
+                if (keyword) {
+                    result = result.filter((item) => {
+                        const email = typeof item === 'string' ? item : (item.email || '');
+                        return String(email).toUpperCase().includes(keyword);
+                    });
+                }
+                return result;
+            }
+            return result;
+        }
+
+        function setFilter(type, value) {
+            tableFilters[type] = value;
+            paginationState[type].page = 1;
+            if (type === 'phone_pool') renderPhoneTable();
+            if (type === 'card_pool') renderCardTable();
+            if (type === 'cdk') renderCDKTable();
+            if (type === 'product') renderProductTable();
+        }
+
+        function handleProductSearch(value) {
+            tableSearch.product = String(value || '');
+            paginationState.product.page = 1;
+            renderProductTable();
+        }
+
+        function handleCdkSearch(value) {
+            tableSearch.cdk = String(value || '');
+            paginationState.cdk.page = 1;
+            renderCDKTable();
+        }
+
+        function closeFilterMenus() {
+            document.querySelectorAll('.filter-dropdown.open').forEach((dropdown) => dropdown.classList.remove('open'));
+        }
+
+        function toggleFilterMenu(type) {
+            const dropdown = document.querySelector(`.filter-dropdown[data-filter="${type}"]`);
+            const shouldOpen = !dropdown?.classList.contains('open');
+            closeFilterMenus();
+            if (shouldOpen) {
+                dropdown?.classList.add('open');
+            }
+        }
+
+        function selectFilter(type, value, label) {
+            const dropdown = document.querySelector(`.filter-dropdown[data-filter="${type}"]`);
+            dropdown?.querySelector('.filter-trigger span')?.replaceChildren(document.createTextNode(label));
+            dropdown?.querySelectorAll('.filter-option').forEach((option) => option.classList.remove('active'));
+            const activeOption = Array.from(dropdown?.querySelectorAll('.filter-option') || []).find((option) => option.textContent.trim() === label);
+            activeOption?.classList.add('active');
+            closeFilterMenus();
+            setFilter(type, value);
+        }
+
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.filter-dropdown')) {
+                closeFilterMenus();
+            }
+        });
+
+        function changePage(stateKey, nextPage) {
+            paginationState[stateKey].page = nextPage;
+            if (stateKey === 'phone_pool') renderPhoneTable();
+            if (stateKey === 'card_pool') renderCardTable();
+            if (stateKey === 'cdk') renderCDKTable();
+            if (stateKey === 'log') renderLogTable(window.__adminLogs || []);
+        }
+
+        function getItemKey(type, item) {
+            if (type === 'phone_pool') return item.phone || '';
+            if (type === 'card_pool') return item.number || '';
+            if (type === 'cdk') return typeof item === 'string' ? item : (item.code || '');
+            if (type === 'product') return String(item.id || '');
+            return '';
+        }
+
+        function toggleSelection(type, key, checked) {
+            if (!key) return;
+            if (checked) {
+                selectedItems[type].add(key);
+            } else {
+                selectedItems[type].delete(key);
+            }
+        }
+
+        function togglePageSelection(type) {
+            const pageData = getPageItems(getFilteredItems(type), type);
+            const keys = pageData.items.map((item) => getItemKey(type, item)).filter(Boolean);
+            const shouldSelect = keys.some((key) => !selectedItems[type].has(key));
+            keys.forEach((key) => {
+                if (shouldSelect) {
+                    selectedItems[type].add(key);
+                } else {
+                    selectedItems[type].delete(key);
+                }
+            });
+            if (type === 'phone_pool') renderPhoneTable();
+            if (type === 'card_pool') renderCardTable();
+            if (type === 'cdk') renderCDKTable();
+            if (type === 'product') renderProductTable();
+        }
+
+        function pruneSelection(type, source) {
+            const validKeys = new Set((Array.isArray(source) ? source : []).map((item) => getItemKey(type, item)).filter(Boolean));
+            Array.from(selectedItems[type]).forEach((key) => {
+                if (!validKeys.has(key)) {
+                    selectedItems[type].delete(key);
+                }
+            });
+        }
+
+        function getPaginationItems(currentPage, totalPages) {
+            if (totalPages <= 7) {
+                return Array.from({ length: totalPages }, (_, index) => index + 1);
+            }
+
+            const pages = new Set([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+
+            if (currentPage <= 3) {
+                pages.add(2);
+                pages.add(3);
+                pages.add(4);
+            }
+
+            if (currentPage >= totalPages - 2) {
+                pages.add(totalPages - 1);
+                pages.add(totalPages - 2);
+                pages.add(totalPages - 3);
+            }
+
+            const sortedPages = [...pages]
+                .filter((page) => page >= 1 && page <= totalPages)
+                .sort((left, right) => left - right);
+
+            const items = [];
+            sortedPages.forEach((page, index) => {
+                if (index > 0 && page - sortedPages[index - 1] > 1) {
+                    items.push('ellipsis');
+                }
+                items.push(page);
+            });
+
+            return items;
+        }
+
+        function renderPagination(containerId, stateKey, total) {
+            const state = paginationState[stateKey];
+            const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+            const start = total === 0 ? 0 : ((state.page - 1) * state.pageSize) + 1;
+            const end = Math.min(state.page * state.pageSize, total);
+            const pageItems = getPaginationItems(state.page, totalPages);
+            document.getElementById(containerId).innerHTML = `
+                <div class="pagination-meta">共 ${total} 条，当前显示 ${start}-${end}</div>
+                <div class="pagination">
+                    <button class="pagination-nav" onclick="changePage('${stateKey}', ${state.page - 1})" ${state.page <= 1 ? 'disabled' : ''}>上一页</button>
+                    ${pageItems.map((item) => item === 'ellipsis'
+                ? '<span class="pagination-ellipsis">...</span>'
+                : `<button class="${item === state.page ? 'active' : ''}" onclick="changePage('${stateKey}', ${item})">${item}</button>`
+            ).join('')}
+                    <button class="pagination-nav" onclick="changePage('${stateKey}', ${state.page + 1})" ${state.page >= totalPages ? 'disabled' : ''}>下一页</button>
+                </div>
+            `;
+        }
+
+        function switchPage(pId, el) {
+            document.querySelectorAll('.page-view').forEach((p) => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach((i) => i.classList.remove('active'));
+            document.getElementById(pId).classList.add('active');
+            const navItem = el || document.querySelector(`.nav-item[onclick*="'${pId}'"]`);
+            navItem?.classList.add('active');
+
+            if (pId === 'runtime_logs') {
+                startRuntimeLogStream();
+            } else {
+                stopRuntimeLogStream();
+            }
+
+            if (pId === 'pool_emails') {
+                loadPoolEmails(false).catch(() => { });
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function renderPoolEmailsTable() {
+            const tbody = document.getElementById('pool_emails_body');
+            const hint = document.getElementById('pool_emails_empty_hint');
+            if (!tbody) {
+                return;
+            }
+            if (!poolEmailsList.length) {
+                tbody.innerHTML = '';
+                if (hint) {
+                    hint.style.display = 'block';
+                }
+                lucide.createIcons();
+                return;
+            }
+            if (hint) {
+                hint.style.display = 'none';
+            }
+
+            tbody.innerHTML = poolEmailsList.map((row) => {
+                const id = Number(row.id);
+                const regBadge = row.registered
+                    ? '<span class="status-badge status-success">已注册</span>'
+                    : '<span class="status-badge status-running">未注册</span>';
+                const lockBadge = row.in_use
+                    ? '<span class="status-badge" style="background:rgba(245,158,11,0.15);color:#f59e0b;">占用中</span>'
+                    : '<span class="status-badge" style="opacity:.78;">空闲</span>';
+                let pwdCell;
+                if (row.has_oauth) {
+                    pwdCell = '<span class="status-badge status-success">OAuth2</span>';
+                } else if (row.has_password) {
+                    pwdCell = '<span style="color:var(--text-secondary)">密码</span>';
+                } else {
+                    pwdCell = '<span class="status-badge" style="background:rgba(239,68,68,0.12);color:#f87171;">缺失</span>';
+                }
+                const regAt = row.registered_at
+                    ? String(row.registered_at).replace('T', ' ').slice(0, 19)
+                    : '-';
+                const safeEmail = escapeHtml(row.email || '');
+                return `
+                <tr>
+                    <td><code>${safeEmail}</code></td>
+                    <td style="text-align:center">${pwdCell}</td>
+                    <td style="text-align:center">${regBadge}</td>
+                    <td style="text-align:center">${lockBadge}</td>
+                    <td>${escapeHtml(regAt)}</td>
+                    <td style="text-align:center">
+                        <button type="button" class="btn btn-success" style="padding:8px 12px;margin-right:8px;border-radius:10px;" onclick="previewPoolMailbox(${id})">
+                            <i data-lucide="inbox"></i> 邮件
+                        </button>
+                        <button type="button" class="btn-delete" onclick="deletePoolEmailRow(${id})">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        async function loadPoolEmails(showToast = false) {
+            try {
+                const res = await authFetch('/api/admin/pool-emails');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || '加载邮箱列表失败');
+                }
+                poolEmailsList = Array.isArray(data.items) ? data.items : [];
+                renderPoolEmailsTable();
+                if (showToast) {
+                    showMessage('邮箱列表已刷新', 'success');
+                }
+            } catch (error) {
+                showMessage(error.message || '加载邮箱列表失败', 'error');
+            }
+        }
+
+        function handlePoolMailFileImport(ev) {
+            const input = ev.target;
+            const file = input.files && input.files[0];
+            if (!file) {
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                const ta = document.getElementById('pool_mail_import_text');
+                if (ta) {
+                    ta.value = String(reader.result || '');
+                }
+                showMessage(`已载入文件：${file.name}`, 'success');
+            };
+            reader.onerror = () => showMessage('读取文件失败', 'error');
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        async function submitPoolMailImport() {
+            const ta = document.getElementById('pool_mail_import_text');
+            const text = ta ? ta.value.trim() : '';
+            if (!text) {
+                showMessage('请先粘贴内容或选择 mail.txt', 'warning');
+                return;
+            }
+            try {
+                const res = await authFetch('/api/admin/pool-emails/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.message || '导入失败');
+                }
+                showMessage(data.message || '导入成功', 'success');
+                await loadPoolEmails(false);
+            } catch (error) {
+                showMessage(error.message || '导入失败', 'error');
+            }
+        }
+
+        async function previewPoolMailbox(id) {
+            const panel = document.getElementById('pool_mail_preview_panel');
+            const title = document.getElementById('pool_mail_preview_title');
+            const tbody = document.getElementById('pool_mail_preview_body');
+            if (!panel || !tbody) {
+                return;
+            }
+            panel.style.display = 'block';
+            if (title) {
+                title.textContent = `邮件预览 (#${id})`;
+            }
+            tbody.innerHTML = '<tr><td colspan="4">加载中...</td></tr>';
+            try {
+                const res = await authFetch(`/api/admin/pool-emails/${id}/messages?limit=50`);
+                const data = await res.json();
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.message || '加载失败');
+                }
+                const rows = data.messages || [];
+                if (!rows.length) {
+                    tbody.innerHTML = '<tr><td colspan="4">暂无邮件（请确认密码支持 IMAP，且已在系统配置中启用垃圾箱）</td></tr>';
+                } else {
+                    tbody.innerHTML = rows.map((m) => `
+                    <tr>
+                        <td>${escapeHtml(m.folder)}</td>
+                        <td>${escapeHtml(m.subject)}</td>
+                        <td>${escapeHtml(m.from)}</td>
+                        <td>${escapeHtml(m.date)}</td>
+                    </tr>`).join('');
+                }
+                lucide.createIcons();
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="4">${escapeHtml(error.message || '加载失败')}</td></tr>`;
+            }
+        }
+
+        function closePoolMailPreview() {
+            const panel = document.getElementById('pool_mail_preview_panel');
+            if (panel) {
+                panel.style.display = 'none';
+            }
+        }
+
+        async function deletePoolEmailRow(id) {
+            const ok = await showAdminConfirm(`确定删除邮箱池记录 #${id} ?`, '删除邮箱');
+            if (!ok) {
+                return;
+            }
+            try {
+                const res = await authFetch(`/api/admin/pool-emails/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.message || '删除失败');
+                }
+                showMessage(data.message || '已删除', 'success');
+                await loadPoolEmails(false);
+            } catch (error) {
+                showMessage(error.message || '删除失败', 'error');
+            }
+        }
+
+        function scheduleSessionRefresh(expiresAt) {
+            if (adminRefreshTimer) {
+                clearTimeout(adminRefreshTimer);
+            }
+
+            const fallbackDelay = 55 * 60 * 1000;
+            const delay = Math.max(60 * 1000, Math.min(fallbackDelay, Number(expiresAt || 0) - Date.now() - (5 * 60 * 1000)));
+            adminRefreshTimer = setTimeout(() => {
+                ensureAdminSession().catch(() => { });
+            }, delay);
+        }
+
+        async function ensureAdminSession() {
+            const response = await authFetch('/api/admin/session');
+            const data = await response.json();
+            if (data.refreshed && data.token) {
+                setAdminToken(data.token);
+            }
+            scheduleSessionRefresh(data.expiresAt);
+            return data;
+        }
+
+        async function loadData(isInitial = false) {
+            try {
+                const res = await authFetch('/api/admin/data');
+                const data = await res.json();
+                document.getElementById('stat_cpu_percent').innerText = `${Number(data.runtime?.system?.cpu?.percent || 0)}%`;
+                document.getElementById('stat_cpu_meta').innerText = data.runtime?.system?.cpu?.text || '实时 CPU 使用率';
+                document.getElementById('stat_memory_percent').innerText = `${Number(data.runtime?.system?.memory?.percent || 0)}%`;
+                document.getElementById('stat_memory_meta').innerText = data.runtime?.system?.memory?.text || '0.0G/0.0G';
+                document.getElementById('stat_disk_percent').innerText = `${Number(data.runtime?.system?.disk?.percent || 0)}%`;
+                document.getElementById('stat_disk_meta').innerText = `${data.runtime?.system?.disk?.usedText || '0.0G'}/${data.runtime?.system?.disk?.totalText || '0.0G'}${data.runtime?.system?.disk?.drive ? ` (${data.runtime.system.disk.drive})` : ''}`;
+                document.getElementById('stat_uptime_meta').innerText = '服务持续运行时间';
+                startUptimeTicker(data.runtime?.system?.uptime?.seconds || 0);
+                document.getElementById('stat_total').innerText = data.stats.total;
+                document.getElementById('stat_success').innerText = data.stats.success;
+                document.getElementById('stat_failed').innerText = data.stats.failed;
+                document.getElementById('stat_cdk_total').innerText = data.stats.cdk_total || 0;
+                document.getElementById('stat_cdk_used').innerText = data.stats.cdk_used || 0;
+                document.getElementById('stat_cdk_unused').innerText = data.stats.cdk_unused || 0;
+                document.getElementById('stat_phone_total').innerText = (data.config.phone_pool || []).length;
+                document.getElementById('stat_card_total').innerText = (data.config.card_pool || []).length;
+                document.getElementById('stat_product_total').innerText = data.stats.product_total || 0;
+                document.getElementById('stat_product_disabled').innerText = data.stats.product_disabled || 0;
+                document.getElementById('stat_product_pending').innerText = data.stats.product_pending || 0;
+                document.getElementById('stat_foreground_slots').innerText = `${Number(data.runtime?.active_foreground_jobs || 0)}/${Number(data.config.max_concurrent_activations || 1)}`;
+
+                const resumeBtn = document.getElementById('resume_product_btn');
+                const resumeAvailable = Boolean(data.stats.product_resume_available) && Number(data.stats.product_resume_count || 0) > 0;
+                if (resumeBtn) {
+                    resumeBtn.style.display = resumeAvailable ? 'inline-flex' : 'none';
+                    resumeBtn.dataset.count = String(data.stats.product_resume_count || 0);
+                    resumeBtn.dataset.message = String(data.stats.product_resume_message || '');
+                    resumeBtn.title = String(data.stats.product_resume_message || '');
+                }
+
+                if (isInitial) {
+                    document.getElementById('proxy').value = data.config.proxy || '';
+                    document.getElementById('max_concurrent_activations').value = data.config.max_concurrent_activations || 1;
+                    document.getElementById('max_background_concurrent').value = data.config.max_background_concurrent || 1;
+                    phonePool = data.config.phone_pool || [];
+                    cardPool = data.config.card_pool || [];
+                    pruneSelection('phone_pool', phonePool);
+                    pruneSelection('card_pool', cardPool);
+                    renderPhoneTable();
+                    renderCardTable();
+                }
+
+                window.__adminRuntime = data.runtime || { active_activation_jobs: 0 };
+                lastMaintenanceModeValue = Boolean(data.config.maintenance_mode);
+                updateMaintenanceModeUI(data.config, window.__adminRuntime);
+
+                const src = ['random', 'pool', 'inbox'].includes(String(data.config.email_source))
+                    ? String(data.config.email_source)
+                    : (data.config.pool_email_enabled ? 'pool' : 'random');
+                const radioRandom = document.getElementById('email_source_random');
+                const radioPool = document.getElementById('email_source_pool');
+                const radioInbox = document.getElementById('email_source_inbox');
+                if (radioRandom && radioPool && radioInbox) {
+                    radioRandom.checked = src === 'random';
+                    radioPool.checked = src === 'pool';
+                    radioInbox.checked = src === 'inbox';
+                    syncEmailSourceUI();
+                }
+                const poolEmailHostEl = document.getElementById('pool_email_imap_host');
+                if (poolEmailHostEl) {
+                    poolEmailHostEl.value = data.config.pool_email_imap_host || 'outlook.office365.com';
+                }
+                const poolEmailJunkEl = document.getElementById('pool_email_include_junk');
+                if (poolEmailJunkEl) {
+                    poolEmailJunkEl.checked = data.config.pool_email_include_junk !== false;
+                }
+                const randomDomainEl = document.getElementById('random_email_domain');
+                if (randomDomainEl) {
+                    randomDomainEl.value = data.config.random_email_domain || 'chiyiyi.cloud';
+                }
+                const inboxBaseEl = document.getElementById('inbox_api_base');
+                if (inboxBaseEl) {
+                    inboxBaseEl.value = data.config.inbox_api_base || 'https://temp-email-api.jzqkwl.com';
+                }
+                const inboxDomainEl = document.getElementById('inbox_email_domain');
+                if (inboxDomainEl) {
+                    inboxDomainEl.value = data.config.inbox_email_domain || '';
+                }
+                const inboxDomainsEl = document.getElementById('inbox_email_domains');
+                if (inboxDomainsEl) {
+                    const list = data.config.inbox_email_domains;
+                    if (Array.isArray(list)) {
+                        inboxDomainsEl.value = list.join('\n');
+                    } else {
+                        inboxDomainsEl.value = String(list || '').replace(/[,;]/g, '\n');
+                    }
+                }
+
+                window.__adminLogs = data.logs || [];
+                renderLogTable(window.__adminLogs);
+
+                const cdkRes = await authFetch('/api/admin/cdks');
+                cdkPool = await cdkRes.json();
+                pruneSelection('cdk', cdkPool);
+                renderCDKTable();
+
+                const productRes = await authFetch('/api/admin/products');
+                productPool = await productRes.json();
+                renderProductTable();
+
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Failed to load data', error);
+            }
+        }
+
+        function updateMaintenanceModeUI(config = {}, runtime = {}) {
+            const checkbox = document.getElementById('maintenance_mode');
+            const hint = document.getElementById('maintenance_mode_hint');
+            if (!checkbox || !hint) {
+                return;
+            }
+
+            const enabled = Boolean(config.maintenance_mode);
+            const drain = Boolean(config.maintenance_mode_drain);
+            const activeJobs = Math.max(0, Number(runtime.active_activation_jobs || 0));
+
+            const isPendingEnable = enabled && drain && activeJobs > 0;
+            checkbox.checked = isPendingEnable ? false : enabled;
+            checkbox.disabled = maintenanceModeSaving || isPendingEnable;
+
+            if (isPendingEnable) {
+                hint.textContent = `维护模式待开启，当前还有 ${activeJobs} 个任务在运行；新请求已拒绝，待现有任务全部完成后将自动开启`;
+                return;
+            }
+
+            if (enabled) {
+                hint.textContent = '维护模式已开启，当前拒绝所有新任务';
+                return;
+            }
+
+            hint.textContent = '开启后立即拒绝所有新任务';
+        }
+
+        async function batchTestProxies() {
+            const ta = document.getElementById('proxy');
+            const text = String(ta?.value || '').trim();
+            const lines = text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+            if (!lines.length) {
+                showMessage('请先填入至少一条代理 URL', 'warning');
+                return;
+            }
+
+            const panel = document.getElementById('proxy_test_panel');
+            const tbody = document.getElementById('proxy_test_body');
+            const summary = document.getElementById('proxy_test_summary');
+            panel.style.display = 'block';
+            summary.textContent = `正在并发测试 ${lines.length} 条代理...`;
+            tbody.innerHTML = lines.map((line, i) => `
+                <tr id="proxy_test_row_${i}">
+                    <td style="text-align:center;color:var(--text-dim);">${i + 1}</td>
+                    <td style="text-align:center;"><span class="status-badge" style="opacity:.6;">测试中</span></td>
+                    <td>—</td>
+                    <td style="text-align:center;">—</td>
+                    <td><code style="font-size:12px;">${escapeHtml(line)}</code></td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+
+            try {
+                const res = await authFetch('/api/admin/proxy/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ proxies: lines })
+                });
+                const raw = await res.text();
+                if (!raw || !raw.trim()) {
+                    throw new Error(`HTTP ${res.status}，响应为空（多为网关超时、Node 崩溃或服务重启，请刷新后台或稍后再试）`);
+                }
+                let data;
+                try {
+                    data = JSON.parse(raw);
+                } catch (_) {
+                    throw new Error(`HTTP ${res.status}，接口未返回 JSON（可能被反向代理截断或非管理端口）`);
+                }
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.message || '测试失败');
+                }
+                const results = Array.isArray(data.results) ? data.results : [];
+                let okCount = 0;
+                results.forEach((r, i) => {
+                    const row = document.getElementById(`proxy_test_row_${i}`);
+                    if (!row) return;
+                    const statusBadge = r.ok
+                        ? '<span class="status-badge status-success">通过</span>'
+                        : '<span class="status-badge" style="background:rgba(239,68,68,0.12);color:#f87171;">失败</span>';
+                    if (r.ok) okCount += 1;
+                    const ip = r.ok ? `<code>${escapeHtml(r.ip || '-')}</code>` : `<span style="color:#f87171; font-size:12px;">${escapeHtml(r.error || '失败')}</span>`;
+                    const lat = r.ok ? `${r.latencyMs}ms` : '—';
+                    row.children[1].innerHTML = statusBadge;
+                    row.children[2].innerHTML = ip;
+                    row.children[3].textContent = lat;
+                });
+                summary.textContent = `测试完成 · 通过 ${okCount} / 共 ${results.length}`;
+                lucide.createIcons();
+            } catch (error) {
+                summary.textContent = `测试失败: ${error.message || ''}`;
+            }
+        }
+
+        function getCurrentEmailSource() {
+            if (document.getElementById('email_source_pool')?.checked) return 'pool';
+            if (document.getElementById('email_source_inbox')?.checked) return 'inbox';
+            return 'random';
+        }
+
+        function syncEmailSourceUI() {
+            const src = getCurrentEmailSource();
+            document.querySelectorAll('.email-source-card').forEach((card) => {
+                const input = card.querySelector('input[type="radio"]');
+                if (input) {
+                    card.classList.toggle('is-active', !!input.checked);
+                }
+            });
+            const setEnabled = (id, enabled) => {
+                const el = document.getElementById(id);
+                if (el) el.dataset.disabled = enabled ? '0' : '1';
+            };
+            setEnabled('random_email_options', src === 'random');
+            setEnabled('pool_email_options', src === 'pool');
+            setEnabled('inbox_email_options', src === 'inbox');
+        }
+
+        function normalizeRandomDomain(raw) {
+            const cleaned = String(raw || '')
+                .trim()
+                .replace(/^@+/, '')
+                .replace(/\s+/g, '')
+                .toLowerCase();
+            return cleaned || 'chiyiyi.cloud';
+        }
+
+        function buildConfigPayload(overrides = {}) {
+            const src = getCurrentEmailSource();
+            return {
+                proxy: document.getElementById('proxy').value,
+                max_concurrent_activations: Math.max(1, parseInt(document.getElementById('max_concurrent_activations').value, 10) || 1),
+                max_background_concurrent: Math.max(1, parseInt(document.getElementById('max_background_concurrent').value, 10) || 1),
+                maintenance_mode: Object.prototype.hasOwnProperty.call(overrides, 'maintenance_mode')
+                    ? Boolean(overrides.maintenance_mode)
+                    : document.getElementById('maintenance_mode').checked,
+                email_source: src,
+                pool_email_enabled: src === 'pool',
+                pool_email_imap_host: String(document.getElementById('pool_email_imap_host')?.value || 'outlook.office365.com').trim() || 'outlook.office365.com',
+                pool_email_include_junk: Boolean(document.getElementById('pool_email_include_junk')?.checked),
+                random_email_domain: normalizeRandomDomain(document.getElementById('random_email_domain')?.value),
+                inbox_api_base: String(document.getElementById('inbox_api_base')?.value || 'https://temp-email-api.jzqkwl.com').trim().replace(/\/+$/, '') || 'https://temp-email-api.jzqkwl.com',
+                inbox_email_domain: String(document.getElementById('inbox_email_domain')?.value || '').trim().replace(/^@/, ''),
+                inbox_email_domains: String(document.getElementById('inbox_email_domains')?.value || '')
+                    .split(/[\n,;\s]+/)
+                    .map((d) => d.trim().replace(/^@/, ''))
+                    .filter(Boolean),
+                phone_pool: phonePool.filter((p) => p.phone),
+                card_pool: cardPool
+                    .filter((c) => c.number)
+                    .map((card) => ({ ...card, expiry: formatCardExpiryForSave(card.expiry) }))
+            };
+        }
+
+        async function saveMaintenanceMode() {
+            const checkbox = document.getElementById('maintenance_mode');
+            const nextValue = Boolean(checkbox?.checked);
+            maintenanceModeSaving = true;
+            updateMaintenanceModeUI(
+                {
+                    maintenance_mode: nextValue,
+                    maintenance_mode_drain: nextValue && Number(window.__adminRuntime?.active_activation_jobs || 0) > 0
+                },
+                window.__adminRuntime
+            );
+
+            try {
+                const res = await authFetch('/api/admin/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(buildConfigPayload({
+                        maintenance_mode: nextValue
+                    }))
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || '维护模式保存失败');
+                }
+                lastMaintenanceModeValue = nextValue;
+                showMessage(data.message, 'success');
+                await loadData(true);
+            } catch (error) {
+                if (checkbox) {
+                    checkbox.checked = lastMaintenanceModeValue;
+                }
+                showMessage(error.message || '维护模式保存失败', 'error');
+                await loadData(true);
+            } finally {
+                maintenanceModeSaving = false;
+                updateMaintenanceModeUI(
+                    {
+                        maintenance_mode: document.getElementById('maintenance_mode')?.checked,
+                        maintenance_mode_drain: Boolean(document.getElementById('maintenance_mode')?.checked)
+                            && Number(window.__adminRuntime?.active_activation_jobs || 0) > 0
+                    },
+                    window.__adminRuntime
+                );
+            }
+        }
+
+        function renderCDKTable() {
+            const pageData = getPageItems(getFilteredItems('cdk'), 'cdk');
+            document.getElementById('cdk_body').innerHTML = pageData.items.map((cdk) => {
+                const code = typeof cdk === 'string' ? cdk : (cdk.code || '');
+                const status = typeof cdk === 'string' ? 'unused' : (cdk.status || 'unused');
+                const shipped = typeof cdk === 'string' ? false : Boolean(cdk.shipped);
+                const type = typeof cdk === 'string' ? '自助' : (cdk.type || '自助');
+                const usedAt = typeof cdk === 'string' ? null : cdk.used_at;
+                const createdAt = typeof cdk === 'string' ? null : cdk.created_at;
+
+                return `
+                <tr>
+                    <td class="select-cell"><input type="checkbox" ${selectedItems.cdk.has(code) ? 'checked' : ''} onchange="toggleSelection('cdk', '${code}', this.checked)"></td>
+                    <td><span class="cdk-copy" onclick="copyCDK('${code}')"><code>${code}</code><i data-lucide="copy"></i></span></td>
+                    <td style="text-align:center"><span class="status-badge ${type === '成品' ? 'status-success' : 'status-running'}" style="background: ${type === '成品' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.15)'}; color: ${type === '成品' ? '#34d399' : '#818cf8'}">${type}</span></td>
+                    <td style="text-align:center"><span class="readonly-switch ${shipped ? 'active' : ''}" title="${shipped ? '已出库' : '未出库'}"></span></td>
+                    <td>${status === 'processing'
+                        ? '<span class="status-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">开通中</span>'
+                        : (status === 'used'
+                            ? '<span class="status-badge status-success">已使用</span>'
+                            : '<span class="status-badge status-running">未使用</span>')}</td>
+                    <td>${usedAt || '-'}</td>
+                    <td style="text-align:center">
+                        <button class="btn-delete" onclick="deleteCDK('${code}')">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+            renderPagination('cdk_pagination', 'cdk', pageData.total);
+            lucide.createIcons();
+        }
+
+        async function copyCDK(cdk) {
+            try {
+                await copyText(cdk);
+                await markCDKShipped(cdk);
+                showMessage(`已复制激活码: ${cdk}`, 'success');
+            } catch (error) {
+                showMessage('复制失败，请手动复制', 'error');
+            }
+        }
+
+        async function copyText(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return;
+            }
+            const input = document.createElement('textarea');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+        }
+
+        async function markCDKShipped(cdk) {
+            const res = await authFetch(`/api/admin/cdks/${encodeURIComponent(cdk)}/ship`, { method: 'POST' });
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || '标记出库失败');
+            }
+            const item = cdkPool.find((entry) => (typeof entry === 'string' ? entry : entry.code) === cdk);
+            if (item && typeof item !== 'string') {
+                item.shipped = true;
+            }
+            renderCDKTable();
+        }
+
+        async function batchCopyCDKs() {
+            const codes = Array.from(selectedItems.cdk);
+            if (codes.length === 0) {
+                showMessage('请选择要复制的 CDK', 'warning');
+                return;
+            }
+
+            try {
+                await copyText(codes.join('\n'));
+                await Promise.all(codes.map((code) => markCDKShipped(code)));
+                showMessage(`已复制 ${codes.length} 个 CDK，并标记出库`, 'success');
+            } catch (error) {
+                showMessage(error.message || '批量复制失败', 'error');
+            }
+        }
+
+        async function batchDeleteCDKs() {
+            const codes = Array.from(selectedItems.cdk);
+            if (codes.length === 0) {
+                showMessage('请选择要删除的 CDK', 'warning');
+                return;
+            }
+            const ok = await showAdminConfirm(`确定删除选中的 ${codes.length} 个 CDK ?`, '删除 CDK');
+            if (!ok) {
+                return;
+            }
+            await Promise.all(codes.map((code) => authFetch(`/api/admin/cdks/${encodeURIComponent(code)}`, { method: 'DELETE' })));
+            selectedItems.cdk.clear();
+            await loadData();
+        }
+
+        async function batchDeletePhones() {
+            const keys = Array.from(selectedItems.phone_pool);
+            if (keys.length === 0) {
+                showMessage('请选择要删除的号码', 'warning');
+                return;
+            }
+            const ok = await showAdminConfirm(`确定删除选中的 ${keys.length} 个号码 ?`, '删除号码');
+            if (!ok) {
+                return;
+            }
+            phonePool = phonePool.filter((item) => !selectedItems.phone_pool.has(item.phone || ''));
+            selectedItems.phone_pool.clear();
+            renderPhoneTable();
+        }
+
+        async function batchDeleteCards() {
+            const keys = Array.from(selectedItems.card_pool);
+            if (keys.length === 0) {
+                showMessage('请选择要删除的银行卡', 'warning');
+                return;
+            }
+            const ok = await showAdminConfirm(`确定删除选中的 ${keys.length} 张银行卡 ?`, '删除银行卡');
+            if (!ok) {
+                return;
+            }
+            cardPool = cardPool.filter((item) => !selectedItems.card_pool.has(item.number || ''));
+            selectedItems.card_pool.clear();
+            renderCardTable();
+        }
+
+        function renderLogTable(logs) {
+            const pageData = getPageItems(logs, 'log');
+            document.getElementById('log_body').innerHTML = pageData.items.map((l) => `
+                <tr>
+                    <td>${l.time}</td>
+                    <td><code>${l.cdk || '-'}</code></td>
+                    <td style="text-align:center"><span class="status-badge ${l.type === '成品' ? 'status-success' : 'status-running'}" style="background: ${l.type === '成品' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.15)'}; color: ${l.type === '成品' ? '#34d399' : '#818cf8'}; padding: 4px 10px; font-size: 11px;">${l.type || '自助'}</span></td>
+                    <td><code>${l.token}</code></td>
+                    <td>${l.message || '-'}</td>
+                    <td>
+                        <div style="font-size: 12px; margin-bottom: 2px;">${l.progress}%</div>
+                        <div class="progress-mini-track">
+                            <div class="progress-mini-bar ${l.status}" style="width: ${l.progress}%"></div>
+                        </div>
+                    </td>
+                    <td>${renderStatus(l.status)}</td>
+                    <td style="text-align:center"><button type="button" class="btn-delete" title="删除此任务记录" onclick='deleteAdminTaskLog(${JSON.stringify(l.id)})'><i data-lucide="trash-2"></i></button></td>
+                </tr>
+            `).join('');
+            renderPagination('log_pagination', 'log', pageData.total);
+            lucide.createIcons();
+        }
+
+        async function deleteAdminTaskLog(jobKey) {
+            const key = String(jobKey || '').trim();
+            if (!key) {
+                return;
+            }
+            const ok = await showAdminConfirm(
+                `确定删除任务记录「${key}」？仅删除数据库中的本条记录，不会强制终止正在运行的子进程。`,
+                '删除任务'
+            );
+            if (!ok) {
+                return;
+            }
+            try {
+                const res = await authFetch(`/api/admin/task-logs/${encodeURIComponent(key)}`, { method: 'DELETE' });
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch (_) {
+                    /* ignore */
+                }
+                if (!res.ok) {
+                    throw new Error(data.message || `删除失败（${res.status}）`);
+                }
+                showMessage(data.message || '任务记录已删除', 'success');
+                await loadData();
+            } catch (e) {
+                showMessage(e.message || '删除失败', 'error');
+            }
+            lucide.createIcons();
+        }
+
+        let currentGenerateType = '自助';
+        function selectGenerateType(type) {
+            currentGenerateType = type;
+            const dropdown = document.querySelector('.filter-dropdown[data-filter="cdk_generate_type"]');
+            dropdown.querySelector('span').innerText = type;
+            dropdown.querySelectorAll('.filter-option').forEach(item => {
+                item.classList.toggle('active', item.innerText === type);
+            });
+            closeFilterMenus();
+        }
+
+        async function generateCDKs(btn) {
+            const count = parseInt(document.getElementById('cdk_count').value, 10) || 1;
+            const type = currentGenerateType;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> 生成中...';
+            lucide.createIcons();
+
+            try {
+                const res = await authFetch('/api/admin/cdks/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ count, type })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || '生成失败');
+                }
+                showMessage(data.message || '生成成功', 'success');
+                await loadData();
+            } catch (error) {
+                showMessage(error.message || '生成失败', 'error');
+            } finally {
+                btn.innerHTML = original;
+                lucide.createIcons();
+            }
+        }
+
+        async function deleteCDK(cdk) {
+            const ok = await showAdminConfirm(`确定删除 CDK: ${cdk} ?`, '删除 CDK');
+            if (!ok) {
+                return;
+            }
+            await authFetch(`/api/admin/cdks/${cdk}`, { method: 'DELETE' });
+            await loadData();
+        }
+
+        function renderPhoneTable() {
+            const pageData = getPageItems(getFilteredItems('phone_pool'), 'phone_pool');
+            document.getElementById('phone_pool_body').innerHTML = pageData.items.map((item, index) => {
+                const actualIndex = phonePool.indexOf(item);
+                const isActive = isAssetActive(item);
+                const key = item.phone || '';
+                return `
+                <tr>
+                    <td class="select-cell"><input type="checkbox" ${selectedItems.phone_pool.has(key) ? 'checked' : ''} onchange="toggleSelection('phone_pool', '${key}', this.checked)"></td>
+                    <td><input type="text" class="asset-input" value="${item.phone}" onchange="phonePool[${actualIndex}].phone=this.value" placeholder="13800000000"></td>
+                    <td><input type="text" class="asset-input" value="${item.key}" onchange="phonePool[${actualIndex}].key=this.value" placeholder="API Key"></td>
+                    <td style="text-align:center">${Number(item.usage_count || 0)}</td>
+                    <td style="text-align:center">${renderAssetStatus(isActive)}</td>
+                    <td style="text-align:center"><button class="btn-delete" onclick="phonePool.splice(${actualIndex},1);renderPhoneTable()" title="删除"><i data-lucide="trash-2"></i></button></td>
+                </tr>
+            `;
+            }).join('');
+            renderPagination('phone_pool_pagination', 'phone_pool', pageData.total);
+            lucide.createIcons();
+        }
+
+        function formatCardExpiryForDisplay(expiry) {
+            return String(expiry || '').replace(/\D/g, '').slice(0, 4);
+        }
+
+        function formatCardExpiryForSave(expiry) {
+            const digits = String(expiry || '').replace(/\D/g, '').slice(0, 4);
+            if (digits.length === 4) {
+                return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+            }
+            return String(expiry || '');
+        }
+
+        function renderCardTable() {
+            const pageData = getPageItems(getFilteredItems('card_pool'), 'card_pool');
+            document.getElementById('card_pool_body').innerHTML = pageData.items.map((item, index) => {
+                const actualIndex = cardPool.indexOf(item);
+                const isActive = isAssetActive(item);
+                const key = item.number || '';
+                return `
+                <tr>
+                    <td class="select-cell"><input type="checkbox" ${selectedItems.card_pool.has(key) ? 'checked' : ''} onchange="toggleSelection('card_pool', '${key}', this.checked)"></td>
+                    <td><input type="text" class="asset-input" value="${item.number}" onchange="cardPool[${actualIndex}].number=this.value" placeholder="4111 1111 1111 1111"></td>
+                    <td><input type="text" class="asset-input" value="${formatCardExpiryForDisplay(item.expiry)}" maxlength="4" inputmode="numeric" onchange="cardPool[${actualIndex}].expiry=this.value" placeholder="0431"></td>
+                    <td><input type="text" class="asset-input" value="${item.cvc}" onchange="cardPool[${actualIndex}].cvc=this.value" placeholder="123"></td>
+                    <td style="text-align:center">${Number(item.usage_count || 0)}</td>
+                    <td style="text-align:center">${renderAssetStatus(isActive)}</td>
+                    <td style="text-align:center"><button class="btn-delete" onclick="cardPool.splice(${actualIndex},1);renderCardTable()" title="删除"><i data-lucide="trash-2"></i></button></td>
+                </tr>
+            `;
+            }).join('');
+            renderPagination('card_pool_pagination', 'card_pool', pageData.total);
+            lucide.createIcons();
+        }
+
+        function renderAssetStatus(isActive) {
+            return isActive
+                ? '<span class="status-badge status-success">正常</span>'
+                : '<span class="status-badge status-failed">已作废</span>';
+        }
+
+        function getImportBoxId(type) {
+            if (type === 'phone_pool') return 'phone_import_box';
+            if (type === 'card_pool') return 'card_import_box';
+            return 'cdk_import_box';
+        }
+
+        function toggleImportBox(type) {
+            const currentBox = document.getElementById(getImportBoxId(type));
+            ['phone_pool', 'card_pool', 'cdk'].forEach((key) => {
+                if (key !== type) {
+                    document.getElementById(getImportBoxId(key))?.classList.remove('active');
+                }
+            });
+            currentBox?.classList.toggle('active');
+        }
+
+        function normalizeImportLines(rawText) {
+            return String(rawText || '')
+                .split(/\r?\n/)
+                .map((line) => line.trim())
+                .filter(Boolean);
+        }
+
+        function upsertPhoneAsset(phone, key) {
+            const existing = phonePool.find((item) => String(item.phone || '') === phone);
+            if (existing) {
+                existing.key = key;
+                existing.is_active = 1;
+                existing.status = 'normal';
+                return false;
+            }
+            phonePool.push({ phone, key, usage_count: 0, is_active: 1, status: 'normal' });
+            return true;
+        }
+
+        function upsertCardAsset(number, expiry, cvc) {
+            const existing = cardPool.find((item) => String(item.number || '') === number);
+            if (existing) {
+                existing.expiry = expiry;
+                existing.cvc = cvc;
+                existing.is_active = 1;
+                existing.status = 'normal';
+                return false;
+            }
+            cardPool.push({ number, expiry, cvc, usage_count: 0, is_active: 1, status: 'normal' });
+            return true;
+        }
+
+        function importAssets(type) {
+            const isPhonePool = type === 'phone_pool';
+            const textarea = document.getElementById(isPhonePool ? 'phone_import_text' : 'card_import_text');
+            const lines = normalizeImportLines(textarea?.value);
+
+            if (lines.length === 0) {
+                showMessage('请输入要导入的内容', 'warning');
+                return;
+            }
+
+            let createdCount = 0;
+            let updatedCount = 0;
+
+            for (let index = 0; index < lines.length; index += 1) {
+                const line = lines[index];
+
+                if (isPhonePool) {
+                    const match = line.match(/^([0-9]+)\s*-\s*(.+)$/);
+                    if (!match) {
+                        showMessage(`第 ${index + 1} 行格式错误，请使用 号码-APIKEY`, 'error');
+                        return;
+                    }
+
+                    const [, phone, key] = match;
+                    const isNew = upsertPhoneAsset(phone.trim(), key.trim());
+                    if (isNew) createdCount += 1;
+                    else updatedCount += 1;
+                    continue;
+                }
+
+                const match = line.match(/^([0-9]{12,19})\s*-\s*([0-9/]{4,5})\s*-\s*([0-9]{3,4})$/);
+                if (!match) {
+                    showMessage(`第 ${index + 1} 行格式错误，请使用 卡号-有效期-安全码`, 'error');
+                    return;
+                }
+
+                const [, number, rawExpiry, cvc] = match;
+                const expiry = formatCardExpiryForDisplay(rawExpiry);
+                if (expiry.length !== 4) {
+                    showMessage(`第 ${index + 1} 行有效期错误，请使用 4 位 MMYY`, 'error');
+                    return;
+                }
+
+                const isNew = upsertCardAsset(number.trim(), expiry, cvc.trim());
+                if (isNew) createdCount += 1;
+                else updatedCount += 1;
+            }
+
+            if (isPhonePool) {
+                paginationState.phone_pool.page = Math.max(1, Math.ceil(phonePool.length / paginationState.phone_pool.pageSize));
+                renderPhoneTable();
+            } else {
+                paginationState.card_pool.page = Math.max(1, Math.ceil(cardPool.length / paginationState.card_pool.pageSize));
+                renderCardTable();
+            }
+
+            textarea.value = '';
+            document.getElementById(isPhonePool ? 'phone_import_box' : 'card_import_box')?.classList.remove('active');
+            showMessage(`导入完成，新增 ${createdCount} 条，更新 ${updatedCount} 条`, 'success');
+        }
+
+        function normalizeCdkImportValues(rawText) {
+            return [...new Set(
+                String(rawText || '')
+                    .split(/[\s,，]+/)
+                    .map((item) => item.trim())
+                    .filter(Boolean)
+            )];
+        }
+
+        async function importCDKs() {
+            const textarea = document.getElementById('cdk_import_text');
+            const codes = normalizeCdkImportValues(textarea?.value);
+
+            if (codes.length === 0) {
+                showMessage('请输入要导入的卡密', 'warning');
+                return;
+            }
+
+            try {
+                const res = await authFetch('/api/admin/cdks/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cdks: codes })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || '导入失败');
+                }
+                textarea.value = '';
+                document.getElementById('cdk_import_box')?.classList.remove('active');
+                await loadData();
+                showMessage(
+                    `导入完成，新增 ${Number(data.insertedCount || 0)} 个，重复 ${Number(data.duplicateCount || 0)} 个`,
+                    'success'
+                );
+            } catch (error) {
+                showMessage(error.message || '导入失败', 'error');
+            }
+        }
+
+        function addAssetRow(type) {
+            if (type === 'phone_pool') {
+                phonePool.push({ phone: '', key: '', usage_count: 0, is_active: 1, status: 'normal' });
+                paginationState.phone_pool.page = Math.max(1, Math.ceil(phonePool.length / paginationState.phone_pool.pageSize));
+                renderPhoneTable();
+                return;
+            }
+
+            cardPool.push({ number: '', expiry: '', cvc: '', usage_count: 0, is_active: 1, status: 'normal' });
+            paginationState.card_pool.page = Math.max(1, Math.ceil(cardPool.length / paginationState.card_pool.pageSize));
+            renderCardTable();
+        }
+
+        async function saveAllConfigs() {
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> 处理中...';
+            lucide.createIcons();
+
+            const payload = buildConfigPayload();
+
+            try {
+                const res = await authFetch('/api/admin/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || '保存失败');
+                }
+                showMessage(data.message, 'success');
+                await loadData(true);
+            } catch (error) {
+                showMessage(error.message || '保存失败', 'error');
+            } finally {
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+            }
+        }
+
+        async function changeAdminPassword() {
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            const currentPassword = document.getElementById('current_password').value;
+            const newPassword = document.getElementById('new_password').value.trim();
+
+            if (!currentPassword) {
+                showMessage('请输入原密码', 'warning');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showMessage('新密码至少 6 位', 'warning');
+                return;
+            }
+
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> 提交中...';
+            lucide.createIcons();
+
+            try {
+                const res = await authFetch('/api/admin/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || '修改失败');
+                }
+
+                document.getElementById('current_password').value = '';
+                document.getElementById('new_password').value = '';
+                showMessage(data.message, 'success');
+                redirectToLogin();
+            } catch (error) {
+                showMessage(error.message || '修改失败', 'error');
+            } finally {
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+            }
+        }
+
+        function renderProductTable() {
+            const pageData = getPageItems(getFilteredItems('product'), 'product');
+            const tbody = document.getElementById('product_body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = pageData.items.map((p) => {
+                const isActive = p.status === '正常';
+                return `
+                <tr>
+                    <td class="select-cell"><input type="checkbox" ${selectedItems.product.has(String(p.id)) ? 'checked' : ''} onchange="toggleSelection('product', '${p.id}', this.checked)"></td>
+                    <td><code>${p.email}</code></td>
+                    <td>${p.claimed_cdk ? `<code>${p.claimed_cdk}</code>` : '<span style="color: var(--text-dim);">-</span>'}</td>
+                    <td>
+                        ${p.imap_key
+                            ? `<a href="https://imap.chiyiyi.cloud/?key=${encodeURIComponent(p.imap_key)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; font-family: monospace;">${p.imap_key}</a>`
+                            : '<span style="color: var(--text-dim);">-</span>'}
+                    </td>
+                    <td>${p.time}</td>
+                    <td style="text-align:center">
+                        <span class="status-badge ${isActive ? 'status-success' : 'status-failed'}" style="cursor: pointer;" onclick="toggleProductStatus('${p.id}', '${p.status}')" title="${isActive ? '点击封禁' : '点击恢复'}">${p.status}</span>
+                    </td>
+                    <td style="text-align:center">
+                        <span class="readonly-switch ${p.shipped ? 'active' : ''}" title="${p.shipped ? '已出库' : '未出库'}"></span>
+                    </td>
+                    <td>
+                        <div style="display: flex; justify-content: center; gap: 8px;">
+                            <button class="btn-delete" style="background: rgba(16, 185, 129, 0.12); color: var(--success);" onclick="exportSingleProduct('${p.id}', '${p.email}')" title="单个出库下载">
+                                <i data-lucide="download"></i>
+                            </button>
+                            <button class="btn-delete" onclick="deleteProduct('${p.id}')" title="删除">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+            renderPagination('product_pagination', 'product', pageData.total);
+            lucide.createIcons();
+        }
+
+        async function toggleProductStatus(id, currentStatus) {
+            const newStatus = currentStatus === '正常' ? '封禁' : '正常';
+            try {
+                const res = await authFetch(`/api/admin/products/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (res.ok) {
+                    showMessage('状态已更新', 'success');
+                    loadData();
+                } else {
+                    showMessage('状态更新失败', 'error');
+                }
+            } catch (e) {
+                showMessage('网络错误', 'error');
+            }
+        }
+
+        async function batchDeleteProducts() {
+            const selected = Array.from(selectedItems.product);
+            if (selected.length === 0) {
+                showMessage('请先选择要删除的成品号', 'warn');
+                return;
+            }
+            const ok = await showAdminConfirm(
+                `确定要删除选中的 ${selected.length} 个成品号吗？此操作不可恢复。`,
+                '删除成品号'
+            );
+            if (!ok) {
+                return;
+            }
+            let successCount = 0;
+            for (const id of selected) {
+                try {
+                    const res = await authFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+                    if (res.ok) successCount++;
+                } catch (e) {
+                    console.error('Delete error', e);
+                }
+            }
+            showMessage(`成功删除 ${successCount} 个成品号`, 'success');
+            selectedItems.product.clear();
+            loadData(); // reload data
+        }
+
+        async function batchExportProducts() {
+            const selected = Array.from(selectedItems.product);
+            if (selected.length === 0) {
+                showMessage('请先选择要导出的成品号', 'warn');
+                return;
+            }
+
+            const okExport = await showAdminConfirm(
+                `确定要将选中的 ${selected.length} 个成品号批量出库并导出为一个 JSON 文件吗？`,
+                '批量出库'
+            );
+            if (!okExport) {
+                return;
+            }
+
+            try {
+                const res = await authFetch('/api/admin/products/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: selected })
+                });
+
+                if (!res.ok) {
+                    let message = '批量出库失败';
+                    try {
+                        const data = await res.json();
+                        message = data.message || message;
+                    } catch (_) { }
+                    throw new Error(message);
+                }
+
+                const blob = await res.blob();
+                const disposition = res.headers.get('Content-Disposition') || '';
+                const match = disposition.match(/filename=([^;]+)/i);
+                const fileName = match ? decodeURIComponent(match[1].replace(/"/g, '').trim()) : `成品号批量出库_${Date.now()}.json`;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showMessage(`已批量出库 ${selected.length} 个成品号`, 'success');
+                selectedItems.product.clear();
+                loadData();
+            } catch (e) {
+                showMessage(e.message || '批量出库失败', 'error');
+            }
+        }
+
+        async function exportSingleProduct(id, email) {
+            try {
+                const res = await authFetch(`/api/admin/products/${id}/export`);
+                if (!res.ok) {
+                    throw new Error(await res.text() || '单个出库失败');
+                }
+
+                const blob = await res.blob();
+                const disposition = res.headers.get('Content-Disposition') || '';
+                const match = disposition.match(/filename=([^;]+)/i);
+                const fileName = match ? decodeURIComponent(match[1].replace(/"/g, '').trim()) : `成品号出库_${Date.now()}.json`;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showMessage(`已单个出库 ${email}`, 'success');
+                await loadData();
+            } catch (error) {
+                showMessage(error.message || '单个出库失败', 'error');
+            }
+        }
+
+        async function deleteProduct(id) {
+            const ok = await showAdminConfirm('确定要删除该成品号吗？', '删除成品号');
+            if (!ok) {
+                return;
+            }
+            try {
+                await authFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+                showMessage('成品号已删除', 'success');
+                await loadData();
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        async function runAdminProductGeneration(btn, endpoint, payload, options = {}) {
+            const container = document.getElementById('product_gen_progress_container');
+            const bar = document.getElementById('product_gen_bar');
+            const percentText = document.getElementById('product_gen_percent');
+            const statusText = document.getElementById('product_gen_status');
+            const count = Math.max(1, Number(options.count || payload?.count || 1));
+            const wsHeartbeatIntervalMs = 5000;
+            const wsHeartbeatTimeoutMs = 12000;
+
+            if (btn.disabled) return;
+
+            btn.disabled = true;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader" class="animate-spin"></i> ${options.loadingText || '生产中...'}`;
+            lucide.createIcons();
+
+            if (options.switchToProducts) {
+                switchPage('products');
+            }
+
+            container.style.display = 'block';
+            bar.style.width = '0%';
+            percentText.innerText = '0%';
+            statusText.innerText = options.initialText || `准备生产 ${count} 个成品号...`;
+            bar.style.background = 'linear-gradient(90deg, var(--accent), #a855f7)';
+
+            let socket = null;
+            let settled = false;
+            let heartbeatInterval = null;
+            let heartbeatTimeout = null;
+            let reconnectTimer = null;
+
+            const clearHeartbeat = () => {
+                clearInterval(heartbeatInterval);
+                clearTimeout(heartbeatTimeout);
+                heartbeatInterval = null;
+                heartbeatTimeout = null;
+            };
+
+            const scheduleHeartbeatTimeout = () => {
+                clearTimeout(heartbeatTimeout);
+                heartbeatTimeout = setTimeout(() => {
+                    if (socket && !settled) {
+                        console.warn('Admin product WS heartbeat timeout, reconnecting...');
+                        try {
+                            socket.close();
+                        } catch (_) { }
+                    }
+                }, wsHeartbeatTimeoutMs);
+            };
+
+            const startHeartbeat = () => {
+                clearHeartbeat();
+                scheduleHeartbeatTimeout();
+                heartbeatInterval = setInterval(() => {
+                    if (!socket || socket.readyState !== WebSocket.OPEN) {
+                        return;
+                    }
+                    try {
+                        socket.send(JSON.stringify({ type: 'ping', ts: Date.now() }));
+                        scheduleHeartbeatTimeout();
+                    } catch (error) {
+                        console.error('Admin product ws ping failed', error);
+                    }
+                }, wsHeartbeatIntervalMs);
+            };
+
+            const cleanupSocket = () => {
+                clearHeartbeat();
+                clearTimeout(reconnectTimer);
+                reconnectTimer = null;
+                if (socket) {
+                    try { socket.close(); } catch (_) { }
+                }
+                socket = null;
+            };
+
+            const finish = async (message, isSuccess) => {
+                if (settled) return;
+                settled = true;
+                cleanupSocket();
+                window.__adminProductGenJobKey = '';
+                setProductGenStopVisible(false);
+                statusText.innerText = message;
+                bar.style.background = isSuccess ? 'var(--success)' : 'var(--danger)';
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+                await loadData();
+            };
+
+            try {
+                const response = await authFetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload || {})
+                });
+                const data = await response.json();
+
+                if (!data.success || !data.jobKey) {
+                    throw new Error(data.message || options.failMessage || '后台成品生产启动失败');
+                }
+
+                window.__adminProductGenJobKey = String(data.jobKey);
+                setProductGenStopVisible(true);
+
+                statusText.innerText = data.message || options.runningText || `后台成品生产已启动，并发上限 ${data.workerCount || 1}`;
+
+                const connectSocket = () => {
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    socket = new WebSocket(`${protocol}//${window.location.host}`);
+
+                    socket.onopen = () => {
+                        clearTimeout(reconnectTimer);
+                        reconnectTimer = null;
+                        socket.send(JSON.stringify({ type: 'subscribe', jobKey: data.jobKey }));
+                        startHeartbeat();
+                    };
+
+                    socket.onmessage = async (event) => {
+                        try {
+                            const payload = JSON.parse(event.data);
+                            if (payload.type === 'pong') {
+                                scheduleHeartbeatTimeout();
+                                return;
+                            }
+                            if (payload.jobKey !== data.jobKey) return;
+
+                            scheduleHeartbeatTimeout();
+
+                            const progress = Math.max(0, Math.min(100, Math.round(Number(payload.progress) || 0)));
+                            bar.style.width = `${progress}%`;
+                            percentText.innerText = `${progress}%`;
+                            if (payload.message) {
+                                statusText.innerText = payload.message;
+                            }
+
+                            if (payload.status === 'success') {
+                                await finish(payload.message || `成功生产 ${count} 个成品号！`, true);
+                            } else if (payload.status === 'failed' || payload.status === 'maintenance') {
+                                await finish(payload.message || '后台成品生产失败', false);
+                            }
+                        } catch (error) {
+                            console.error('Admin product ws parse failed', error);
+                        }
+                    };
+
+                    socket.onclose = () => {
+                        clearHeartbeat();
+                        socket = null;
+                        if (!settled) {
+                            statusText.innerText = '连接中断，正在重连...';
+                            clearTimeout(reconnectTimer);
+                            reconnectTimer = setTimeout(connectSocket, 3000);
+                        }
+                    };
+
+                    socket.onerror = (error) => {
+                        console.error('Admin product ws error', error);
+                    };
+                };
+
+                connectSocket();
+            } catch (error) {
+                window.__adminProductGenJobKey = '';
+                setProductGenStopVisible(false);
+                container.style.display = 'none';
+                bar.style.width = '0%';
+                percentText.innerText = '0%';
+                statusText.innerText = '正在准备生产环境...';
+                bar.style.background = 'linear-gradient(90deg, var(--accent), #a855f7)';
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+                showMessage(error.message || options.failMessage || '后台成品生产启动失败', 'error');
+            }
+        }
+
+        async function startProductGeneration(btn) {
+            const count = parseInt(document.getElementById('product_gen_count').value, 10) || 1;
+            await runAdminProductGeneration(btn, '/api/admin/products/generate', { count }, {
+                count,
+                loadingText: '生产中...',
+                initialText: `准备生产 ${count} 个成品号...`,
+                failMessage: '后台成品生产启动失败'
+            });
+        }
+
+        async function resumePendingProducts(btn) {
+            const count = Math.max(1, Number(btn?.dataset?.count || 1));
+            await runAdminProductGeneration(btn, '/api/admin/products/resume', {}, {
+                count,
+                loadingText: '继续中...',
+                initialText: `准备继续生产剩余 ${count} 个成品号...`,
+                failMessage: '继续生产启动失败',
+                switchToProducts: true
+            });
+        }
+
+        async function bootAdmin() {
+            if (!getAdminToken()) {
+                redirectToLogin();
+                return;
+            }
+
+            try {
+                await ensureAdminSession();
+                await loadData(true);
+                if (adminDataRefreshTimer) {
+                    clearInterval(adminDataRefreshTimer);
+                }
+                adminDataRefreshTimer = setInterval(() => {
+                    if (!adminDataRefreshPaused) {
+                        loadData(false).catch(() => { });
+                    }
+                }, 3000);
+                updateAdminDataRefreshButton();
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Admin boot failed', error);
+            }
+        }
+
+        document.getElementById('maintenance_mode')?.addEventListener('change', () => {
+            if (maintenanceModeSaving) {
+                return;
+            }
+            saveMaintenanceMode().catch((error) => {
+                console.error('Maintenance mode save failed', error);
+            });
+        });
+
+        document.querySelectorAll('input[name="email_source"]').forEach((el) => {
+            el.addEventListener('change', () => syncEmailSourceUI());
+        });
+
+        bootAdmin();
+    </script>
+</body>
+
+</html>

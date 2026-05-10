@@ -1,0 +1,42 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+*.env
+
+# Runtime artefacts
+_server.out.log
+_server.err.log
+debug_screenshots/
+product_files/
+scratch/
+mail.txt
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# Stray images at repo root (IDE paste artefacts)
+/[A-F0-9][A-F0-9]*.png
+/[A-F0-9][A-F0-9]*.jpg
+/[A-F0-9][A-F0-9]*.jpeg
+/[A-F0-9][A-F0-9]*.webp
+
+# Local DB dumps & exports
+*.sql.gz
+*.sqlite
+*.db
+
+# Sister project (kept as a separate repo)
+plus_gopay/
